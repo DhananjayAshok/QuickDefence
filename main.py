@@ -8,7 +8,7 @@ from defence import DefendedNetwork
 model = models.resnet18(pretrained=True).eval()
 defendedModel = DefendedNetwork(model).eval()
 preprocessing = dict(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], axis=-3)
-target_model = defendedModel
+target_model = model #defendedModel
 
 fmodel = PyTorchModel(target_model, bounds=(0, 1), preprocessing=preprocessing)
 
@@ -36,6 +36,7 @@ epsilons = [
     0.5,
     1.0,
 ]
+epsilons = [0.002, 0.1]
 raw_advs, clipped_advs, success = attack(fmodel, images, labels, epsilons=epsilons)
 
 # calculate and report the robust accuracy (the accuracy of the model when

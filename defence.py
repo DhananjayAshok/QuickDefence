@@ -4,7 +4,6 @@ import torch.nn as nn
 import torch.distributions as distributions
 
 
-
 class DataAugmenter(nn.Module):
     def __init__(self, max_shift=0.1, p=0.5):
         nn.Module.__init__(self)

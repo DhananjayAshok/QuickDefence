@@ -2,11 +2,12 @@ import torchvision.models as models
 import eagerpy as ep
 from foolbox import PyTorchModel, accuracy, samples
 from foolbox.attacks import LinfPGD
+import utils
 
 from defence import DefendedNetwork
 
 model = models.resnet18(pretrained=True).eval()
-defendedModel = DefendedNetwork(model).eval()
+# defendedModel = DefendedNetwork(model).eval()
 preprocessing = dict(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], axis=-3)
 target_model = model #defendedModel
 
@@ -41,6 +42,9 @@ raw_advs, clipped_advs, success = attack(fmodel, images, labels, epsilons=epsilo
 
 # calculate and report the robust accuracy (the accuracy of the model when
 # it is attacked)
+print(len(clipped_advs), clipped_advs[0].shape, type(clipped_advs[0]))
+utils.show_img(clipped_advs[0][0], title="Adversarial Example")
+utils.show_grid([clipped_advs[0][0], images[0]], title="Adversarial", captions=[1, 2])
 robust_accuracy = 1 - success.float32().mean(axis=-1)
 print("robust accuracy for perturbations with")
 for eps, acc in zip(epsilons, robust_accuracy):

@@ -22,3 +22,7 @@ class DefendedNetwork(nn.Module):
     def generate_input(self, x):
         x = self.data_augmentation(x)
         return x
+
+    def get_model(self):
+        return self.network
+    

@@ -3,6 +3,7 @@ import torch.nn as nn
 import eagerpy as ep
 from foolbox import PyTorchModel, accuracy, samples
 from foolbox.attacks import SpatialAttack
+from foolbox import accuracy
 
 
 class ImagePerturbAttack(Attack):
@@ -14,12 +15,14 @@ class ImagePerturbAttack(Attack):
     dict(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], axis=-3), epsilons=[0.0002, 0.01]):
         fmodel = PyTorchModel(model, bounds=(0, 1), preprocessing=preprocessing)
         images, labels = ep.astensors(input_batch, true_labels)
+        clean_accuracy = accuracy(fmodel, images, labels)
+        print(f"Foolbox clean accuracy {clean_accuracy}")
         # apply the attack
         attack = self.foolbox_attack_class()
         raw_advs, clipped_advs, success = attack(fmodel, images, labels, epsilons=epsilons)
         adv_preds = [fmodel(r).argmax(-1).raw for r in raw_advs]
         raw_advs = [r.raw for r in raw_advs]
-        return raw_advs, adv_preds, success, 1 - success.float32().mean(axis=-1)
+        return raw_advs, adv_preds, success.raw, 1 - success.float32().mean(axis=-1)
 
 
 class ImageSpatialAttack(Attack):
@@ -43,5 +46,5 @@ class ImageSpatialAttack(Attack):
         xp_, _, success = self.attack(fmodel, images, labels)
         adv_preds = fmodel(xp_).argmax(-1).raw
         suc = success.float32().mean().item() * 100
-        return xp_.raw, adv_preds, success, 100-suc
+        return xp_.raw, adv_preds, success.raw, 100-suc
 

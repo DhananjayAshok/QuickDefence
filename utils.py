@@ -40,3 +40,21 @@ def show_grid(imgs, title=None, captions=None):
     if title is not None:
         plt.title(title)
     plt.show()
+
+
+def get_adv_success(adv_raws, success, *args):
+    if isinstance(adv_raws, list):
+        successes = []
+        items = [[] for _ in args]
+        for i, adv_raw in enumerate(adv_raws):
+            successes.append(adv_raw[success[i]])
+            for j, item in enumerate(items):
+                if isinstance(args[j], list):
+                    item.append(args[j][i][success[i]])
+                else:
+                    item.append(args[j][success[i]])
+        to_ret = [successes] + items
+        return to_ret
+    else:
+        a = [adv_raws[success]]
+        return a + [item[success] for item in args]

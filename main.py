@@ -17,14 +17,23 @@ y = y.cuda()
 
 
 from foolbox.attacks import LinfPGD
-from foolbox import accuracy
 preprocessing = dict(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], axis=-3)
 attack = ImagePerturbAttack(foolbox_attack_class=LinfPGD)
 
 print(f"{(model(X).argmax(-1) == y).float().mean()} clean accuracy")
 advs, adv_preds, success, robust_accuracy = attack(model=model, input_batch=X, true_labels=y)
-utils.show_img(advs[0][0], title="Adversarial Example")
-utils.show_grid([advs[0][0], X[0]], title="Adversarial", captions=[adv_preds[0][0].item(), model(X)[0].argmax().item()])
 
 attack = ImageSpatialAttack()
 attack(model, input_batch=X, true_labels=y)
+
+adv_exs, input_batches, true_labels, a_preds = utils.get_adv_success(advs, success, X, y, adv_preds)
+
+adv_ex, ib, tl, ap = adv_exs[1][0], input_batches[1][0], true_labels[1][0], a_preds[1][0]
+utils.show_img(adv_ex, title="Adversarial Example")
+utils.show_grid([adv_ex, ib], title="Adversarial", captions=[ap.item(),
+                                                             model(ib.unsqueeze(0)).argmax(-1).item()])
+
+from adversarial_density import image_defence_density
+defence = lambda x: torch.rand(size=x.size()).to(x.device) + x
+print(image_defence_density(model, adv_image=adv_ex, true_label=tl, defence=defence))
+

@@ -2,10 +2,13 @@ import numpy.random as random
 
 
 class DataAugmentation:
+    """
+    Parent class for all types of augmentations
+    """
     def __init__(self, sequence):
         """
 
-        :param sequence: When seq(input=inp) is called returns processed augmented input
+        :param sequence: When sequence(input=inp) is called returns processed augmented input
         """
         self.sequence = sequence
 
@@ -20,10 +23,16 @@ class DataAugmentation:
 
 
 class RandomSequenceSlice(DataAugmentation):
+    """
+    Given a list of different data augmentations, will perform them at random. 
+    """
     def __init__(self, operations, randomization=None):
         """
 
         :param operations: list of sequence data augmentations to perform
+        :param randomization: either None or a list of probabilities where len(randomization) = len(operations)
+                              operation i will take place with probability randomization[i]
+                              if len(randomization) < len(operations) we use randomization[0] for extra elements
         """
         self.operations = operations
         self.randomization = randomization
@@ -33,9 +42,6 @@ class RandomSequenceSlice(DataAugmentation):
         Sequentially performs data augmentations
 
         :param inp:
-        :param randomization: either None or a list of probabilities where len(randomization) = len(operations)
-                              operation i will take place with probability randomization[i]
-                              if len(randomization) < len(operations) we use randomization[0] for extra elements
         :return: augmented input x
         """
         randomization = self.randomization

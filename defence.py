@@ -1,3 +1,7 @@
+"""
+Test Time Wrapper Around Defended Network
+"""
+
 import torch.nn as nn
 
 
@@ -11,7 +15,7 @@ class DefendedNetwork(nn.Module):
 
     def forward(self, x):
         outputs = []
-        for n in range(self.sample_rate):
+        for n in range(self.sample_rate): #TODO: Multiprocessing support
             input = self.generate_input(x)
             out = self.network(input)
             outputs.append(out)
@@ -25,4 +29,8 @@ class DefendedNetwork(nn.Module):
 
     def get_model(self):
         return self.network
+
+    def predict(self, x):
+        logits = self.forward(x)
+        return logits.argmax(-1)
     

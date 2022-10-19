@@ -26,7 +26,7 @@ class ImageAugmentation(DataAugmentation):
             else:
                 C, H, W = inp.shape
                 inp = inp.reshape(H, W, C)
-        inp = inp.cpu().detach().numpy()
+            inp = inp.cpu().detach().numpy()
         if len(inp.shape) == 4:
             inp = self.sequence(images=inp)
         else:
@@ -64,5 +64,8 @@ class Affine(ImageAugmentation):
         seq = iaa.Affine(scale={"x": scale_x, "y": scale_y}, translate_percent={"x": trans_x, "y": trans_y},
                          rotate=(rotate_l, rotate_u))
         ImageAugmentation.__init__(self=self, sequence=seq)
+
+
+# TODO: Colour augmentation
 
 

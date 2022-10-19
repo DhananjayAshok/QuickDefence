@@ -1,3 +1,11 @@
+"""
+We are given an adversarial example adv_inp, we want to apply a data augmentation based defence tactice defence to it
+an n_sample number of times, and see how many of those are also adversarial examples for a given model.
+
+A low defence adversary density means that often the transformed input is no longer adversarial, and this means we
+would likley have a succesful defence method.
+"""
+
 import torch
 
 

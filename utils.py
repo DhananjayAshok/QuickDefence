@@ -25,6 +25,14 @@ def show_img(tensor_image, title=None):
 
 
 def show_grid(imgs, title=None, captions=None):
+    """
+    Plots a grid of all the provided images. Useful to show original and adversaries side by side.
+
+    :param imgs: either a single image or a list of images of PyTorchTensors or Tensors (pytorch)
+    :param title: string title
+    :param captions: optional list of strings, must be same length as imgs
+    :return: None
+    """
     if not isinstance(imgs, list):
         imgs = [imgs]
     fix, axs = plt.subplots(ncols=len(imgs), squeeze=False)
@@ -43,6 +51,13 @@ def show_grid(imgs, title=None, captions=None):
 
 
 def get_adv_success(adv_raws, success, *args):
+    """
+
+    :param adv_raws:
+    :param success:
+    :param args:
+    :return:
+    """
     if isinstance(adv_raws, list):
         successes = []
         items = [[] for _ in args]
@@ -58,3 +73,8 @@ def get_adv_success(adv_raws, success, *args):
     else:
         a = [adv_raws[success]]
         return a + [item[success] for item in args]
+
+
+class Parameters:
+    device = 'gpu'
+

@@ -1,3 +1,13 @@
+"""
+This is taken from the foolbox system, but we might want to come up with a more different way to get attacks?
+We should TODO: Decide what attacks to benchmark against and implement those. (One or two for each type max)
+Current List of options:
+    1. Pertubation Attack - PGD, ?
+    2. Translation / Spatial Attack - Foolbox implementaiton, ?
+    3. Colour Attack - ColourFool, ?
+
+"""
+
 from attacks.attack import Attack
 import torch.nn as nn
 import eagerpy as ep

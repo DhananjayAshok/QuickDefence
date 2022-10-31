@@ -29,7 +29,7 @@ class RandomSequenceSlice(DataAugmentation):
     def __init__(self, operations, randomization=None):
         """
 
-        :param operations: list of sequence data augmentations to perform
+        :param operations: list of data augmentations to perform
         :param randomization: either None or a list of probabilities where len(randomization) = len(operations)
                               operation i will take place with probability randomization[i]
                               if len(randomization) < len(operations) we use randomization[0] for extra elements

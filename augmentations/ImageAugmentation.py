@@ -13,6 +13,7 @@ class ImageAugmentation(DataAugmentation):
 
     def __call__(self, inp):
         """
+        Currently we assume all augmentations are imgaug augmenters which accept input in shape BS, H, W, C
 
         :param inp: input to the neural network we seek to protect
         :return: augmented input x
@@ -66,6 +67,19 @@ class Affine(ImageAugmentation):
         ImageAugmentation.__init__(self=self, sequence=seq)
 
 
-# TODO: Colour augmentation
+class Saturation(ImageAugmentation):
+    def __init__(self, low=-50, high=50):
+        inseq = iaa.AddToSaturation((low, high))
+        ImageAugmentation.__init__(self, inseq=inseq)
 
 
+class Hue(ImageAugmentation):
+    def __init__(self, low=-50, high=50):
+        inseq = iaa.AddToHue((low, high))
+        ImageAugmentation.__init__(self, inseq=inseq)
+
+
+class Brightness(ImageAugmentation):
+    def __init__(self, low=-30, high=30):
+        inseq = iaa.AddToHue((low, high))
+        ImageAugmentation.__init__(self, inseq=inseq)

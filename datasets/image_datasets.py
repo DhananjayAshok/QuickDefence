@@ -27,7 +27,8 @@ def get_torchvision_dataset(dataset_class, train=False):
 
 def get_torchvision_dataset_sample(dataset_class, train=False, batch_size=32):
     dset = get_torchvision_dataset(dataset_class, train=train)
-    return sample_torch_dataset(dset, batch_size=batch_size, shuffle=True)
+    X, y = sample_torch_dataset(dset, batch_size=batch_size, shuffle=True)
+    return X, y.long()
 
 
 class InverseNormalize:
@@ -36,10 +37,10 @@ class InverseNormalize:
         if normalize_transform is not None:
             means = normalize_transform.mean
             stds = normalize_transform.std
-        inverse_stds = (1/s for s in stds)
-        inverse_means = (-m for m in means)
-        default_means = (0.0 for s in stds)
-        default_stds = (1.0 for m in means)
+        inverse_stds = [1/s for s in stds]
+        inverse_means = [-m for m in means]
+        default_means = [0.0 for s in stds]
+        default_stds = [1.0 for m in means]
         self.trans = transforms.Compose([
             transforms.Normalize(default_means, inverse_stds), transforms.Normalize(inverse_means, default_stds)])
 

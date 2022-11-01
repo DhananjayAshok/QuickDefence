@@ -15,6 +15,6 @@ def sample_torch_dataset(dset, batch_size=32, shuffle=False):
         idx = torch.randint(low=0, high=len(dset), size=(batch_size, ))
     else:
         idx = range(batch_size)
-    for i in idx:
-        X[i], y[i] = dset[i]
+    for i, id in enumerate(idx):
+        X[i], y[i] = dset[id]
     return X, y

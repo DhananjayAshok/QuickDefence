@@ -70,10 +70,11 @@ class DefendedNetwork(nn.Module):
     def forward_no_batch(self, x, n_workers=None):
         if n_workers is None:
             n_workers = self.n_workers
-        xs = [x for i in range(self.sample_rate)]
+
         if n_workers == 1:
-            outputs = [self.forward_single_sample(x) for x in xs]
+            outputs = [self.forward_single_sample(x) for i in range(self.sample_rate)]
         else:
+            xs = [x for i in range(self.sample_rate)]
             pool = mp.pool(processes=n_workers)
             outputs = pool.map(self.forward_single_sample, xs)
 

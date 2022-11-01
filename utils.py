@@ -46,7 +46,7 @@ def show_grid(imgs, title=None, captions=None):
         axs[0, i].imshow(np.asarray(img))
         axs[0, i].set(xticklabels=[], yticklabels=[], xticks=[], yticks=[])
         if captions is not None:
-            axs[0, i].set_xlabel(captions[i])
+            axs[0, i].set_xlabel(str(captions[i]))
     if title is not None:
         plt.title(title)
     plt.show()
@@ -78,9 +78,10 @@ def get_attack_success_measures(model, inps, advs, true_labels):
         adv_pred = model(adv).argmax(-1)[0]
         label = true_labels[i]
         correct = inp_pred == label
+        adv_correct = adv_pred == label
         pred_same = inp_pred == adv_pred
         n_correct += int(correct)
-        robust_accuracy += int(correct)
+        robust_accuracy += int(adv_correct)
         if correct:
             conditional_robust_accuracy += int(pred_same)
         robustness += int(pred_same)

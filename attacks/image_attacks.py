@@ -14,6 +14,7 @@ import eagerpy as ep
 from foolbox import PyTorchModel, accuracy, samples
 from foolbox.attacks import SpatialAttack
 from foolbox import accuracy
+import utils
 
 
 class ImagePerturbAttack(Attack):
@@ -22,7 +23,7 @@ class ImagePerturbAttack(Attack):
         Attack.__init__(self)
 
     def __call__(self, model, input_batch, true_labels, target_labels=None, epsilon=0.00001, preprocessing=None):
-        fmodel = PyTorchModel(model, bounds=(0, 1), preprocessing=preprocessing)
+        fmodel = PyTorchModel(model, bounds=(0, 1), preprocessing=preprocessing, device=utils.Parameters.device)
         images, labels = ep.astensors(input_batch, true_labels)
         # apply the attack
         attack = self.foolbox_attack_class()
@@ -46,7 +47,7 @@ class ImageSpatialAttack(Attack):
         # of the model when it is attacked)
 
     def __call__(self, model, input_batch, true_labels, preprocessing=None):
-        fmodel = PyTorchModel(model, bounds=(0, 1), preprocessing=preprocessing)
+        fmodel = PyTorchModel(model, bounds=(0, 1), preprocessing=preprocessing, device=utils.Parameters.device)
         images, labels = ep.astensors(input_batch, true_labels)
         xp_, _, success = self.attack(fmodel, images, labels)
         return xp_.raw

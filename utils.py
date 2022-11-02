@@ -106,5 +106,5 @@ def get_attack_success_measures(model, inps, advs, true_labels):
 
 
 class Parameters:
-    device = 'cuda'
+    device = 'cpu'
 

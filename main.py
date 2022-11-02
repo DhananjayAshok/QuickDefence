@@ -6,24 +6,33 @@ from datasets.image_datasets import get_torchvision_dataset_sample, InverseNorma
 from attacks.image_attacks import ImagePerturbAttack, ImageSpatialAttack
 import utils
 from models import cifar
-from datasets.image_datasets import get_torchvision_dataset_sample
 from foolbox.attacks import LinfPGD
 from adversarial_density import image_defence_density
 import torch.multiprocessing as mp
+import torchvision.transforms as transforms
+from augmentations import ImageAugmentation as ia
+from defence import DefendedNetwork
 
 
 if __name__ == "__main__":
     mp.set_start_method('spawn')
-
-    model = cifar.get_model().cuda().eval()
+    device = utils.Parameters.device
+    model = cifar.get_model().eval().to(device)
     no_samples = 32
     X, y = get_torchvision_dataset_sample(CIFAR10, batch_size=no_samples)
-    X, y = X.cuda(), y.cuda()
+    X, y = X.to(device), y.to(device)
+    pred = model(X)
+    transform = transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
     inverse_transform = InverseNormalize(means=(0.4914, 0.4822, 0.4465), stds=(0.2023, 0.1994, 0.2010))
+    aug = ia.Saturation()
     image_X = inverse_transform(X[0])
-    pred = model(X).argmin(-1)
-
-
+    auged_X = aug(image_X)
+    utils.show_grid([image_X, auged_X], title="Augmentation", captions=["Image", "Augmented Image"])
+    defended = DefendedNetwork(network=model, data_augmentation=aug, data_n_dims=3, transform=transform,
+                               inverse_transform=inverse_transform, output_shape=(10,), sample_rate=10)
+    defended_pred = defended.predict(X)
+    print(f"Clean Accuracy {utils.get_accuracy_logits(y, pred)} vs Defended Accuracy {utils.get_accuracy(y, defended_pred)}")
+    """
     preprocessing = dict(mean=[0.4914, 0.4822, 0.4465], std=[0.2023, 0.1994, 0.2010], axis=-3)
     attack = ImagePerturbAttack(foolbox_attack_class=LinfPGD)
     advs = attack(model=model, input_batch=X, true_labels=y, preprocessing=preprocessing)
@@ -39,5 +48,6 @@ if __name__ == "__main__":
     accuracy, robust_accuracy, conditional_robust_accuracy, robustness, success = utils.get_attack_success_measures(model, inps=X, advs=advs, true_labels=y)
     print(accuracy, robust_accuracy, conditional_robust_accuracy, robustness)
     utils.show_grid([advs[0], image_X], title="Adversarial", captions=[pred[0], adv_pred[0]])
+    """
 
 

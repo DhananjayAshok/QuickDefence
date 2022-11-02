@@ -48,38 +48,38 @@ class Noise(ImageAugmentation):
     def __init__(self, dist="gaussian", dist_params={}):
 
         if dist == "gaussian":
-            seq = iaa.AdditiveGaussianNoise(loc=dist_params.get('loc', 0), scale=dist_params.get('scale', 1),
+            seq = iaa.AdditiveGaussianNoise(loc=dist_params.get('loc', 0), scale=dist_params.get('scale', 0.015),
                                             per_channel=True)
         elif dist == "laplace":
-            seq = iaa.AdditiveLaplaceNoise(loc=dist_params.get('loc', 0), scale=dist_params.get('scale', 1),
+            seq = iaa.AdditiveLaplaceNoise(loc=dist_params.get('loc', 0), scale=dist_params.get('scale', 0.01),
                                            per_channel=True)
         elif dist == "poisson":
-            seq = iaa.AdditivePoissonNoise(lam=dist_params.get('lam', 1), scale=dist_params.get('scale', 1),
+            seq = iaa.AdditivePoissonNoise(lam=dist_params.get('lam', 1), scale=dist_params.get('scale', 0.01),
                                            per_channel=True)
         ImageAugmentation.__init__(self=self, sequence=seq)
 
 
 class Affine(ImageAugmentation):
-    def __init__(self, scale_x=(1, 1), scale_y=(1, 1), trans_x=(0, 0), trans_y=(0, 0), rotate_l=0
-                 , rotate_u=0):
+    def __init__(self, scale_x=(0.995, 1.005), scale_y=(0.995, 1.005), trans_x=(0, 0), trans_y=(0, 0), rotate_l=-1
+                 , rotate_u=1):
         seq = iaa.Affine(scale={"x": scale_x, "y": scale_y}, translate_percent={"x": trans_x, "y": trans_y},
                          rotate=(rotate_l, rotate_u))
         ImageAugmentation.__init__(self=self, sequence=seq)
 
 
 class Saturation(ImageAugmentation):
-    def __init__(self, low=-50, high=50):
+    def __init__(self, low=-5, high=5):
         inseq = iaa.AddToSaturation((low, high))
-        ImageAugmentation.__init__(self, inseq=inseq)
+        ImageAugmentation.__init__(self, sequence=inseq)
 
 
 class Hue(ImageAugmentation):
-    def __init__(self, low=-50, high=50):
+    def __init__(self, low=-5, high=5):
         inseq = iaa.AddToHue((low, high))
-        ImageAugmentation.__init__(self, inseq=inseq)
+        ImageAugmentation.__init__(self, sequence=inseq)
 
 
 class Brightness(ImageAugmentation):
-    def __init__(self, low=-30, high=30):
+    def __init__(self, low=-3, high=3):
         inseq = iaa.AddToHue((low, high))
-        ImageAugmentation.__init__(self, inseq=inseq)
+        ImageAugmentation.__init__(self, sequence=inseq)

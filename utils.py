@@ -52,6 +52,14 @@ def show_grid(imgs, title=None, captions=None):
     plt.show()
 
 
+def get_accuracy_logits(y, logits):
+    return get_accuracy(y, logits.argmax(-1))
+
+
+def get_accuracy(y, pred):
+    return (y == pred).float().mean()
+
+
 def get_attack_success_measures(model, inps, advs, true_labels):
     """
 
@@ -98,5 +106,5 @@ def get_attack_success_measures(model, inps, advs, true_labels):
 
 
 class Parameters:
-    device = 'gpu'
+    device = 'cuda'
 

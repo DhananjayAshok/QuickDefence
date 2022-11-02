@@ -5,6 +5,8 @@ import torch
 import torch.nn as nn
 import torch.multiprocessing as mp
 
+import utils
+
 
 class DefendedNetwork(nn.Module):
     def __init__(self, network, data_augmentation, sample_rate=10, aggregation="mean", n_workers=1, data_n_dims=None,
@@ -39,7 +41,7 @@ class DefendedNetwork(nn.Module):
             transforms.Normalize((-0.4914, -0.4822, -0.4465), (1, 1, 1)) ])
         """
         nn.Module.__init__(self)
-        self.network = network
+        self.network = network.eval()
         self.sample_rate = sample_rate
         self.data_augmentation = data_augmentation
         self.aggregation = aggregation
@@ -77,8 +79,11 @@ class DefendedNetwork(nn.Module):
             xs = [x for i in range(self.sample_rate)]
             pool = mp.pool(processes=n_workers)
             outputs = pool.map(self.forward_single_sample, xs)
-
-        return self.aggregate_outputs(outputs)
+            pool.close()
+            del xs
+        aggregated = self.aggregate_outputs(outputs)
+        del outputs
+        return aggregated
 
     def forward(self, x, n_workers=None):
         """
@@ -88,15 +93,18 @@ class DefendedNetwork(nn.Module):
         :param n_workers: number of cores for multiprocessing if not specified uses initialized value
         :return:
         """
-        if self.data_n_dims is None or len(x.shape) == self.data_n_dims:
-            return self.forward_no_batch(x, n_workers=n_workers)
-        else:
-            batch_size = x.shape[0]
-            out_shape = (batch_size, ) + self.output_shape
-            out = torch.zeros(out_shape).to(x.device)
-            for b in batch_size:
-                out[b] = self.forward_no_batch(x[b], n_workers=n_workers)
-            return out
+        ret = None
+        with torch.no_grad():
+            if self.data_n_dims is None or len(x.shape) == self.data_n_dims:
+                ret = self.forward_no_batch(x, n_workers=n_workers)
+            else:
+                batch_size = x.shape[0]
+                out_shape = (batch_size, ) + self.output_shape
+                out = torch.zeros(out_shape).to(x.device)
+                for b in range(batch_size):
+                    out[b] = self.forward_no_batch(x[b], n_workers=n_workers)
+                ret = out
+        return ret
 
     def generate_input(self, x):
         x = self.data_augmentation(x)

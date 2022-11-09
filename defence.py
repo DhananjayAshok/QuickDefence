@@ -2,15 +2,25 @@
 Test Time Wrapper Around Defended Network
 """
 import torch
-import torch.nn as nn
 import torch.multiprocessing as mp
+import torch.nn as nn
 
 import utils
 
 
 class DefendedNetwork(nn.Module):
-    def __init__(self, network, data_augmentation, sample_rate=10, aggregation="mean", n_workers=1, data_n_dims=None,
-                 output_shape=(), transform=lambda x: x, inverse_transform=lambda x: x):
+    def __init__(
+        self,
+        network,
+        data_augmentation,
+        sample_rate=10,
+        aggregation="mean",
+        n_workers=1,
+        data_n_dims=None,
+        output_shape=(),
+        transform=lambda x: x,
+        inverse_transform=lambda x: x,
+    ):
         """
 
         :param network:
@@ -99,7 +109,7 @@ class DefendedNetwork(nn.Module):
                 ret = self.forward_no_batch(x, n_workers=n_workers)
             else:
                 batch_size = x.shape[0]
-                out_shape = (batch_size, ) + self.output_shape
+                out_shape = (batch_size,) + self.output_shape
                 out = torch.zeros(out_shape).to(x.device)
                 for b in range(batch_size):
                     out[b] = self.forward_no_batch(x[b], n_workers=n_workers)
@@ -116,4 +126,3 @@ class DefendedNetwork(nn.Module):
     def predict(self, x):
         logits = self.forward(x)
         return logits.argmax(-1)
-    

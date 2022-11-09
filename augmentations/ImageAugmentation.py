@@ -1,5 +1,6 @@
 import torch
 from imgaug import augmenters as iaa
+
 from .DataAugmentation import DataAugmentation
 
 
@@ -48,22 +49,41 @@ class Noise(ImageAugmentation):
     def __init__(self, dist="gaussian", dist_params={}):
 
         if dist == "gaussian":
-            seq = iaa.AdditiveGaussianNoise(loc=dist_params.get('loc', 0), scale=dist_params.get('scale', 0.015),
-                                            per_channel=True)
+            seq = iaa.AdditiveGaussianNoise(
+                loc=dist_params.get("loc", 0),
+                scale=dist_params.get("scale", 0.015),
+                per_channel=True,
+            )
         elif dist == "laplace":
-            seq = iaa.AdditiveLaplaceNoise(loc=dist_params.get('loc', 0), scale=dist_params.get('scale', 0.01),
-                                           per_channel=True)
+            seq = iaa.AdditiveLaplaceNoise(
+                loc=dist_params.get("loc", 0),
+                scale=dist_params.get("scale", 0.01),
+                per_channel=True,
+            )
         elif dist == "poisson":
-            seq = iaa.AdditivePoissonNoise(lam=dist_params.get('lam', 1), scale=dist_params.get('scale', 0.01),
-                                           per_channel=True)
+            seq = iaa.AdditivePoissonNoise(
+                lam=dist_params.get("lam", 1),
+                scale=dist_params.get("scale", 0.01),
+                per_channel=True,
+            )
         ImageAugmentation.__init__(self=self, sequence=seq)
 
 
 class Affine(ImageAugmentation):
-    def __init__(self, scale_x=(0.995, 1.005), scale_y=(0.995, 1.005), trans_x=(0, 0), trans_y=(0, 0), rotate_l=-1
-                 , rotate_u=1):
-        seq = iaa.Affine(scale={"x": scale_x, "y": scale_y}, translate_percent={"x": trans_x, "y": trans_y},
-                         rotate=(rotate_l, rotate_u))
+    def __init__(
+        self,
+        scale_x=(0.995, 1.005),
+        scale_y=(0.995, 1.005),
+        trans_x=(0, 0),
+        trans_y=(0, 0),
+        rotate_l=-1,
+        rotate_u=1,
+    ):
+        seq = iaa.Affine(
+            scale={"x": scale_x, "y": scale_y},
+            translate_percent={"x": trans_x, "y": trans_y},
+            rotate=(rotate_l, rotate_u),
+        )
         ImageAugmentation.__init__(self=self, sequence=seq)
 
 

@@ -7,11 +7,11 @@ Current List of options:
     3. Colour Attack - ColourFool, ?
 
 """
-import torch.nn as nn
 import eagerpy as ep
+import torch.nn as nn
 from foolbox import PyTorchModel, accuracy, samples
 from foolbox.attacks import SpatialAttack
-from foolbox import accuracy
+
 import utils
 
 
@@ -22,23 +22,39 @@ class FoolboxImageAttack:
         self.spatial = foolbox_attack_class == SpatialAttack
         if params is None:
             if self.spatial:
-                self.params = {'max_translation': 2, 'num_translations': 2, 'max_rotation': 10, 'num_rotations': 2}
+                self.params = {
+                    "max_translation": 2,
+                    "num_translations": 2,
+                    "max_rotation": 10,
+                    "num_rotations": 2,
+                }
             else:
-                self.params = {'epsilon': 0.00001}
+                self.params = {"epsilon": 0.00001}
 
-    def __call__(self, model, input_batch, true_labels, target_labels=None, preprocessing=None):
-        fmodel = PyTorchModel(model, bounds=(0, 1), preprocessing=preprocessing, device=utils.Parameters.device)
+    def __call__(
+        self, model, input_batch, true_labels, target_labels=None, preprocessing=None
+    ):
+        fmodel = PyTorchModel(
+            model,
+            bounds=(0, 1),
+            preprocessing=preprocessing,
+            device=utils.Parameters.device,
+        )
         images, labels = ep.astensors(input_batch, true_labels)
         if not self.spatial:
             attack = self.foolbox_attack_class()
-            epsilons = [self.params['epsilon']]
-            raw_advs, clipped_advs, success = attack(fmodel, images, labels, epsilons=epsilons)
+            epsilons = [self.params["epsilon"]]
+            raw_advs, clipped_advs, success = attack(
+                fmodel, images, labels, epsilons=epsilons
+            )
             raw_advs = [r.raw for r in raw_advs][0]
         else:
-            attack = self.foolbox_attack_class(max_translation=self.params['max_translation'],
-                                               num_translations=self.params['num_translations'],
-                                               max_rotation=self.params['max_rotation'],
-                                               num_rotations=self.params['num_rotations'])
+            attack = self.foolbox_attack_class(
+                max_translation=self.params["max_translation"],
+                num_translations=self.params["num_translations"],
+                max_rotation=self.params["max_rotation"],
+                num_rotations=self.params["num_rotations"],
+            )
             raw_advs, _, _ = attack(fmodel, images, labels)
             raw_advs = raw_advs.raw
         return raw_advs

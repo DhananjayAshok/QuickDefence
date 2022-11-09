@@ -1,9 +1,10 @@
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torchvision.transforms.functional as F
 from eagerpy import PyTorchTensor
-import os
 
 
 def safe_mkdir(path, force_clean=False):
@@ -84,7 +85,7 @@ def get_attack_success_measures(model, inps, advs, true_labels):
     robust_accuracy = 0
     conditional_robust_accuracy = 0
     robustness = 0
-    inp_shape = (1, ) + inps[0].shape
+    inp_shape = (1,) + inps[0].shape
     n_points = len(inps)
     n_correct = 0
     for i in range(n_points):
@@ -103,16 +104,15 @@ def get_attack_success_measures(model, inps, advs, true_labels):
         robustness += int(pred_same)
         success.append(not pred_same)
 
-    robust_accuracy = robust_accuracy/n_points
-    accuracy = n_correct/n_points
+    robust_accuracy = robust_accuracy / n_points
+    accuracy = n_correct / n_points
     if n_correct != 0:
         conditional_robust_accuracy = conditional_robust_accuracy / n_correct
     else:
         conditional_robust_accuracy = -1
-    robustness = robustness/n_points
+    robustness = robustness / n_points
     return accuracy, robust_accuracy, conditional_robust_accuracy, robustness, success
 
 
 class Parameters:
-    device = 'cpu'
-
+    device = "cpu"

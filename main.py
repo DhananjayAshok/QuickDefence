@@ -56,6 +56,3 @@ if __name__ == "__main__":
     print(accuracy, robust_accuracy, conditional_robust_accuracy, robustness)
     utils.show_grid([advs[0], image_X], title="Adversarial", captions=[pred[0], adv_pred[0]])
     """
-
-
-

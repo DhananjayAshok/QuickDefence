@@ -46,7 +46,7 @@ if __name__ == "__main__":
     print(accuracy, robust_accuracy, conditional_robust_accuracy, robustness)
 
     utils.show_grid([advs[0], image_X], title="Adversarial", captions=[pred[0].argmax(-1), f"{adv_pred[0], defended_pred[0]}"])
-    # print(image_defence_density(model.cpu(), advs[0].cpu(), y[0], n_samples=10, n_workers=2))
+    print(image_defence_density(model.cpu(), advs[0].cpu(), y[0], n_samples=10, n_workers=2))
 
     """
     attack = ImageSpatialAttack()

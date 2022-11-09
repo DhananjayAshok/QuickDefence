@@ -29,26 +29,34 @@ def show_grid(imgs, title=None, captions=None):
     """
     Plots a grid of all the provided images. Useful to show original and adversaries side by side.
 
-    :param imgs: either a single image or a list of images of PyTorchTensors or Tensors (pytorch)
+    :param imgs: either a single image or a list of images of PyTorchTensors or Tensors (pytorch) or a list of lists
     :param title: string title
-    :param captions: optional list of strings, must be same length as imgs
+    :param captions: optional list of strings, must be same shape as imgs
     :return: None
     """
     if not isinstance(imgs, list):
         imgs = [imgs]
-    fix, axs = plt.subplots(ncols=len(imgs), squeeze=False)
-    for i, img in enumerate(imgs):
-        if type(img) == PyTorchTensor:
-            img = img.raw
-        assert type(img) == torch.Tensor
-        img = img.cpu().detach()
-        img = F.to_pil_image(img)
-        axs[0, i].imshow(np.asarray(img))
-        axs[0, i].set(xticklabels=[], yticklabels=[], xticks=[], yticks=[])
-        if captions is not None:
-            axs[0, i].set_xlabel(str(captions[i]))
+    if not isinstance(imgs[0], list):
+        imgs = [imgs]
+    if isinstance(captions, list) and not isinstance(captions[0], list):
+        captions = [captions]
+    # By now the imgs is a nested list. A single list input gets sent to n_rows 1 and n_columns len(input_imgs)
+    n_rows = len(imgs)
+    n_cols = len(imgs[0])
+    fig, axs = plt.subplots(ncols=n_cols, nrows=n_rows, squeeze=False)
+    for i, img_row in enumerate(imgs):
+        for j, img in enumerate(img_row):
+            if type(img) == PyTorchTensor:
+                img = img.raw
+            assert type(img) == torch.Tensor
+            img = img.cpu().detach()
+            img = F.to_pil_image(img)
+            axs[i, j].imshow(np.asarray(img))
+            axs[i, j].set(xticklabels=[], yticklabels=[], xticks=[], yticks=[])
+            if captions is not None:
+                axs[i, j].set_xlabel(str(captions[i][j]))
     if title is not None:
-        plt.title(title)
+        fig.suptitle(title)
     plt.show()
 
 

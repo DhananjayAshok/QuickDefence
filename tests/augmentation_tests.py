@@ -1,17 +1,26 @@
-from augmentations.ImageAugmentation import *
+from torchvision.datasets import ImageNet, CIFAR10
+import torchvision.transforms as transforms
 
-import torchvision.datasets as datasets
-from datasets.image_datasets import get_torchvision_dataset
-from utils import show_grid
+from datasets.image_datasets import get_torchvision_dataset_sample, InverseNormalize
+import utils
+from augmentations import ImageAugmentation as ia
 
 
-dset = get_torchvision_dataset(datasets.FashionMNIST)
-noise = Noise(dist_params={"loc": 0, "scale": 0.001})
-trans = (-0.1, 0.1)
-affine = Affine(trans_x=trans, trans_y=trans)
-img = dset[0][0]
-img1 = noise(img)
-img2 = affine(img)
-captions = ["Original", "Noise", "Affine"]
+def test_noise(dataset=CIFAR10, param_sets=[{"dist": "gaussian", "loc": 0, "scale": 0.0001}]):
+    device = utils.Parameters.device
+    no_samples = 5
+    X, y = get_torchvision_dataset_sample(dataset, batch_size=no_samples)
+    X, y = X.to(device), y.to(device)
 
-show_grid(imgs=[img, img1, img2], captions=captions)
+    transform = transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+    inverse_transform = InverseNormalize(normalize_transform=transform)
+    for param_set in param_sets:
+        aug = ia.Noise(dist=param_set["dist"], dist_params=param_set)
+        imgs = []
+        for i in range(no_samples):
+            image_X = inverse_transform(X[i])
+            auged_X = aug(image_X)
+            imgs.append([image_X, auged_X])
+        utils.show_grid(imgs, title=f"Noise on {dataset.__name__}|({param_set})",
+                        captions=[["Image", "Augmented Image"] for i in range(no_samples)])
+

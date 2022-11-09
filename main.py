@@ -3,7 +3,7 @@ import torch
 import utils
 from torchvision.datasets import ImageNet, CIFAR10
 from datasets.image_datasets import get_torchvision_dataset_sample, InverseNormalize
-from attacks.image_attacks import ImagePerturbAttack, ImageSpatialAttack
+from attacks.image_attacks import FoolboxImageAttack
 import utils
 from models import cifar
 from foolbox.attacks import LinfPGD
@@ -36,7 +36,7 @@ if __name__ == "__main__":
           f"{utils.get_accuracy(y, defended_pred)}")
 
     preprocessing = dict(mean=[0.4914, 0.4822, 0.4465], std=[0.2023, 0.1994, 0.2010], axis=-3)
-    attack = ImagePerturbAttack(foolbox_attack_class=LinfPGD)
+    attack = FoolboxImageAttack(foolbox_attack_class=LinfPGD)
     advs = attack(model=model, input_batch=X, true_labels=y, preprocessing=preprocessing)
     adv_pred = model(advs).argmin(-1)
     accuracy, robust_accuracy, conditional_robust_accuracy, robustness, success = utils.get_attack_success_measures(model, inps=X, advs=advs, true_labels=y)

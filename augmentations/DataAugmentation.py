@@ -5,6 +5,7 @@ class DataAugmentation:
     """
     Parent class for all types of augmentations
     """
+
     def __init__(self, sequence):
         """
 
@@ -24,8 +25,9 @@ class DataAugmentation:
 
 class RandomSequenceSlice(DataAugmentation):
     """
-    Given a list of different data augmentations, will perform them at random. 
+    Given a list of different data augmentations, will perform them at random.
     """
+
     def __init__(self, operations, randomization=None):
         """
 

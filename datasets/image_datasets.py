@@ -1,12 +1,7 @@
-import os.path
-import torch
 import torchvision.transforms as transforms
 import torchvision.datasets as ds
-import pandas as pd
-import numpy as np
 from datasets import data_root, sample_torch_dataset
 from utils import safe_mkdir
-from PIL import Image
 
 
 def get_torchvision_dataset(dataset_class, train=False):

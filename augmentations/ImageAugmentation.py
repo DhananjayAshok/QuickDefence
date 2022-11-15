@@ -48,7 +48,7 @@ class Noise(ImageAugmentation):
     def __init__(self, dist="gaussian", dist_params={}):
 
         if dist == "gaussian":
-            seq = iaa.AdditiveGaussianNoise(loc=dist_params.get('loc', 0), scale=dist_params.get('scale', 0.015),
+            seq = iaa.AdditiveGaussianNoise(loc=dist_params.get('loc', 0), scale=dist_params.get('scale', 0.01),
                                             per_channel=True)
         elif dist == "laplace":
             seq = iaa.AdditiveLaplaceNoise(loc=dist_params.get('loc', 0), scale=dist_params.get('scale', 0.01),

@@ -1,14 +1,9 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
 from torchvision import models
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from tqdm import tqdm
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
 

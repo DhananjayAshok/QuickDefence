@@ -6,7 +6,7 @@ from torchvision.datasets import CIFAR10
 import utils
 from adversarial_density import image_defence_density
 from attacks import FoolboxImageAttack
-from augmentations import noise
+from augmentations import get_augmentation
 from datasets import InverseNormalize, get_torchvision_dataset_sample, BatchNormalize
 from defence import DefendedNetwork
 from models import cifar
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     inverse_transform = InverseNormalize(
         means=(0.4914, 0.4822, 0.4465), stds=(0.2023, 0.1994, 0.2010)
     )
-    aug = noise
+    aug = get_augmentation(CIFAR10)
     image_X = inverse_transform(X)[0]
     auged_X = aug(image_X)[0]
     print(auged_X.shape)

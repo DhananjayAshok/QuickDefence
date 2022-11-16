@@ -1,3 +1,4 @@
+import __init__ # Allow executation of this file as script from parent folder
 import torch
 import torch.nn as nn
 from torchvision import models
@@ -5,12 +6,11 @@ from datasets import get_torchvision_dataset
 from torchvision.datasets import CIFAR10
 from tqdm import tqdm
 from datasets import InverseNormalize, BatchNormalize
-from augmentations import standard_cifar_aug
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def train(dataset_class=CIFAR10, n_classes=10, input_channels=3,
-          augmentation=standard_cifar_aug, num_epochs=5, batch_size=32, lr=0.001, transform_location=2):
+          augmentation=lambda x: x, num_epochs=5, batch_size=32, lr=0.001, transform_location=2):
     train_dataset = get_torchvision_dataset(dataset_class, train=True)
     test_dataset = get_torchvision_dataset(dataset_class, train=False)
     if transform_location > 0:
@@ -70,5 +70,6 @@ def train(dataset_class=CIFAR10, n_classes=10, input_channels=3,
     torch.save(model, f'models/{dataset_class.__name__}.pth')
 
 
-train()
+if __name__ == "__main__":
+    train()
 

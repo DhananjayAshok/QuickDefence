@@ -45,7 +45,11 @@ def get_torchvision_dataset(dataset_class, train=False):
             #transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
         ])
     if dataset_class == ds.MNIST:
-        transform = transforms.ToTensor()
+        transform = transforms.Compose([
+            transforms.Resize(size=(28, 28)),
+            transforms.ToTensor(),
+            BatchNormalize(means=(0.127,), stds=(0.2959,)),
+        ])
     save_path = data_root + f"/{dataset_class.__name__}/"
     safe_mkdir(save_path)
     if train:

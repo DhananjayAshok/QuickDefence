@@ -1,7 +1,7 @@
-from torchvision.datasets import ImageNet, CIFAR10
+from torchvision.datasets import CIFAR10
 import torchvision.transforms as transforms
 
-from datasets.image_datasets import get_torchvision_dataset_sample, InverseNormalize
+from datasets import get_torchvision_dataset_sample, InverseNormalize
 import utils
 from augmentations import ImageAugmentation as ia
 from defence import DefendedNetwork

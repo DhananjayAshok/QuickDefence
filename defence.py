@@ -30,9 +30,9 @@ class DefendedNetwork(nn.Module):
         :param n_workers: for multiprocessing
         :param data_n_dims: the len(x.shape) where x is a single datapoint no batch dimension.
         :param output_shape: the o.shape where o is a single datapoint output from model no batch dimension
-        :param transform: transform that takes raw dataset input tensor to the format the network accepts
+        :param transform: BatchNormalize Object that takes raw dataset input tensor to the format the network accepts
             (not input image etc)
-        :param inverse_transform: transform that takes the tensor the network accepts and undoes all the procedures done
+        :param inverse_transform: InverseNormalize that takes the tensor the network accepts and undoes all the procedures done
          by the above transform
 
          One example of tranform and inverse transform is if

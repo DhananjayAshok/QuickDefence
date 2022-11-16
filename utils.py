@@ -115,4 +115,4 @@ def get_attack_success_measures(model, inps, advs, true_labels):
 
 
 class Parameters:
-    device = "cpu"
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

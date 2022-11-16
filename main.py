@@ -1,15 +1,13 @@
-import torch
 import torch.multiprocessing as mp
-import torchvision.models as models
 import torchvision.transforms as transforms
 from foolbox.attacks import LinfPGD
-from torchvision.datasets import CIFAR10, ImageNet
+from torchvision.datasets import CIFAR10
 
 import utils
 from adversarial_density import image_defence_density
-from attacks.image_attacks import FoolboxImageAttack
-from augmentations import ImageAugmentation as ia
-from datasets.image_datasets import InverseNormalize, get_torchvision_dataset_sample
+from attacks import FoolboxImageAttack
+from augmentations import noise
+from datasets import InverseNormalize, get_torchvision_dataset_sample, BatchNormalize
 from defence import DefendedNetwork
 from models import cifar
 
@@ -23,10 +21,11 @@ if __name__ == "__main__":
     pred = model(X)
 
     transform = transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+    batch_transform = BatchNormalize(normalize_transform=transform)
     inverse_transform = InverseNormalize(
         means=(0.4914, 0.4822, 0.4465), stds=(0.2023, 0.1994, 0.2010)
     )
-    aug = ia.Noise()
+    aug = noise
     image_X = inverse_transform(X[0])
     auged_X = aug(image_X)
     utils.show_grid(
@@ -36,7 +35,7 @@ if __name__ == "__main__":
         network=model,
         data_augmentation=aug,
         data_n_dims=3,
-        transform=transform,
+        transform=batch_transform,
         inverse_transform=inverse_transform,
         output_shape=(10,),
         sample_rate=10,

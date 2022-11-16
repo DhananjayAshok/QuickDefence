@@ -2,8 +2,27 @@ import torchvision.datasets as ds
 import torchvision.transforms as transforms
 import torch
 import torch.nn as nn
-from datasets import data_root, sample_torch_dataset
 from utils import safe_mkdir
+
+data_root = "data/"
+
+
+def sample_torch_dataset(dset, batch_size=32, shuffle=False):
+    f, h = dset[0]
+    X_shape = f.shape
+    # We assume y is a scalar output
+    batch_shape = (batch_size, ) + X_shape
+    y_shape = (batch_size, )
+    device = f.device
+    X = torch.zeros(size=batch_shape).to(device)
+    y = torch.zeros(size=y_shape).to(device)
+    if shuffle:
+        idx = torch.randint(low=0, high=len(dset), size=(batch_size, ))
+    else:
+        idx = range(batch_size)
+    for i, id in enumerate(idx):
+        X[i], y[i] = dset[id]
+    return X, y
 
 
 def get_torchvision_dataset(dataset_class, train=False):

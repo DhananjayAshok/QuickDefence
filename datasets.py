@@ -37,10 +37,21 @@ def get_torchvision_dataset(dataset_class, train=False):
                 ),
             ]
         )
-
+    if dataset_class == ds.Caltech101:
+        transform = transforms.Compose([
+            transforms.Resize(size=(224, 224)),
+            transforms.ToTensor(),
+            BatchNormalize(means=(0.485, 0.456, 0.406), stds=(0.229, 0.224, 0.225)),
+            #transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+        ])
+    if dataset_class == ds.MNIST:
+        transform = transforms.ToTensor()
     save_path = data_root + f"/{dataset_class.__name__}/"
     safe_mkdir(save_path)
-    return dataset_class(save_path, train=train, transform=transform, download=True)
+    if train:
+        return dataset_class(save_path, transform=transform, download=True, train=train)
+    else:
+        return dataset_class(save_path, transform=transform, download=True)
 
 
 def get_torchvision_dataset_sample(dataset_class, train=False, batch_size=32):
@@ -59,20 +70,30 @@ class BatchNormalize(nn.Module):
             means = normalize_transform.mean
             stds = normalize_transform.std
         self.op = transforms.Normalize(mean=means, std=stds)
-        self.mean = None
-        self.std = None
+        self.mean = means
+        self.std = stds
+        self.tensors = False
 
     def __call__(self, x):
         ndims = len(x.shape)
         if ndims == 3:
-            return self.op(x)
+            channels = len(self.op.mean)
+            if x.shape[0] == channels:
+                return self.op(x)
+            elif x.shape[0] < channels: # Assume this means its 1
+                #assert x.shape[0] == 1
+                in_x = torch.cat([x for i in range(channels)], dim=0)
+                return self.op(in_x)
+            else:
+                return self.op(x[:channels])
         else:
             return self.batch_call(x)
 
     def batch_call(self, x):
-        if self.std is None:
-            self.std = torch.Tensor(self.op.std).to(x.device)
-            self.mean = torch.Tensor(self.op.mean).to(x.device)
+        if not self.tensors:
+            self.std = torch.Tensor(self.std).to(x.device)
+            self.mean = torch.Tensor(self.mean).to(x.device)
+            self.tensors = True
         bs, c, h, w = x.shape
         x = x.view(bs, c, h * w) - self.mean.expand(bs, 3).unsqueeze(2)
         x = x / self.std.expand(bs, 3).unsqueeze(2)
@@ -122,3 +143,20 @@ class InverseNormalize(nn.Module):
 
     def __repr__(self):
         return self.trans.__repr__()
+
+
+class Resize:
+    def __init__(self, size, channels=3):
+        self.trans = transforms.Resize(size)
+        self.channels = channels
+
+    def __call__(self, x):
+        c, h, w = x.shape
+        if c < self.channels and c == 1:
+            in_x = torch.cat([x for i in range(self.channels)], dim=0)
+        elif c == self.channels:
+            in_x = x
+        else:
+            in_x = x[:self.channels]
+        return self.trans(in_x)
+

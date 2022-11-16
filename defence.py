@@ -15,7 +15,6 @@ class DefendedNetwork(nn.Module):
         data_augmentation,
         sample_rate=10,
         aggregation="mean",
-        n_workers=1,
         data_n_dims=None,
         output_shape=(),
         transform=lambda x: x,
@@ -55,68 +54,34 @@ class DefendedNetwork(nn.Module):
         self.sample_rate = sample_rate
         self.data_augmentation = data_augmentation
         self.aggregation = aggregation
-        self.n_workers = n_workers
         self.data_n_dims = data_n_dims
         self.output_shape = output_shape
         self.transform = transform
         self.inverse_transform = inverse_transform
 
-    def aggregate_outputs(self, outputs):
+    def aggregate_logits(self, logits):
         if self.aggregation == "mean":
-            return sum(outputs) / len(outputs)
-        return sum(outputs) / len(outputs)
-
-    def forward_single_sample(self, x):
-        """
-
-        :param x: input tensor without any batch dimension
-        :return: output tensor of model run on one augmented input
-        """
-        x = self.inverse_transform(x)
-        input = self.generate_input(x)
-        input = self.transform(input)
-        input = input[None, :]  # Make it have a batch axis
-        out = self.network(input)
-        return out
-
-    def forward_no_batch(self, x, n_workers=None):
-        if n_workers is None:
-            n_workers = self.n_workers
-
-        if n_workers == 1:
-            outputs = [self.forward_single_sample(x) for i in range(self.sample_rate)]
+            avg_logits = torch.sum(logits, dim=1) / self.sample_rate
+            return avg_logits
         else:
-            xs = [x for i in range(self.sample_rate)]
-            pool = mp.pool(processes=n_workers)
-            outputs = pool.map(self.forward_single_sample, xs)
-            pool.close()
-            del xs
-        aggregated = self.aggregate_outputs(outputs)
-        del outputs
-        return aggregated
+            raise ValueError(f"Aggregation method {self.aggregation} not implemented")
 
-    def forward(self, x, n_workers=None):
+    def forward(self, x):
         """
 
         :param x: if data_n_dims was specified during initialization then x can be batch or single,
             else must be single datapoint (but can have batch dimension)
-        :param n_workers: number of cores for multiprocessing if not specified uses initialized value
         :return:
         """
-        ret = None
-        # repeat [bs, smaple_rate, blah ]
-
+        batch_size = x.shape[0]
         with torch.no_grad():
-            if self.data_n_dims is None or len(x.shape) == self.data_n_dims:
-                ret = self.forward_no_batch(x, n_workers=n_workers)
-            else:
-                batch_size = x.shape[0]
-                out_shape = (batch_size,) + self.output_shape
-                out = torch.zeros(out_shape).to(x.device)
-                for b in range(batch_size):
-                    out[b] = self.forward_no_batch(x[b], n_workers=n_workers)
-                ret = out
-        return ret
+            x = self.inverse_transform(x)
+            x = utils.repeat_batch_images(x, num_repeat=self.sample_rate)
+            x = self.data_augmentation(x)
+            x = self.transform(x)
+            logits = self.network(x)
+            logits = logits.view(batch_size, self.sample_rate, logits.shape[1])
+        return self.aggregate_logits(logits)
 
     def generate_input(self, x):
         x = self.data_augmentation(x)

@@ -1,6 +1,7 @@
 import __init__  # Allow executation of this file as script from parent folder
 import matplotlib.pyplot as plt
-from torchvision.datasets import CIFAR10
+import kornia
+
 
 import utils
 from datasets import (
@@ -12,7 +13,7 @@ from datasets import (
 from defence import DefendedNetwork
 
 
-def test_augmentation_visual(Aug_class, dataset=CIFAR10, param_sets=[], batch_size=5):
+def test_augmentation_visual(Aug_class, dataset, param_sets=[], batch_size=5):
     device = utils.Parameters.device
     transform = get_torchvision_dataset(dataset).transform.transforms[2]
     X, y = get_torchvision_dataset_sample(dataset, batch_size=batch_size)
@@ -42,7 +43,7 @@ def dict_str(d):
 def test_augmentation_defence(
     model,
     Aug_class,
-    dataset=CIFAR10,
+    dataset,
     param_sets=[],
     output_shape=(10,),
     sample_rate=10,
@@ -73,5 +74,27 @@ def test_augmentation_defence(
     plt.show()
 
 
+noiseClass = kornia.augmentation.RandomGaussianNoise#std=0.05, p=1.0)
+cjClass = kornia.augmentation.ColorJiggle#(brightness=0.2, contrast=0.3, saturation=0.2, hue=0.3)
+affineClass = kornia.augmentation.RandomAffine#(degrees=(-20, 20), translate=(0, 0.2), p=1)
+zero_1 = [0.001, 0.01, 0.05, 0.1, 0.15, 0.2, 0.4, 0.5, 0.75, 0.8, 0.9, 1]
+noise_param_set = [{"std": i, "p": 1} for i in zero_1]
+brightness_param_set = [{"brightness": i, "p": 1} for i in zero_1]
+contrast_param_set = [{"contrast": i, "p": 1} for i in [0.1, 0.5, 1, 2, 5, 10, 15, 20]]
+saturation_param_set = [{"saturation": i, "p": 1} for i in [0.1, 0.4]]
+hue_param_set = [{"hue": (-i, i), "p": 1} for i in [0.1, 0.2, 0.3, 0.4]]
+color_param_set = brightness_param_set + contrast_param_set + saturation_param_set + hue_param_set
+rotation_param_set = [{"degrees": (-i, i), "p": 1} for i in [1, 5, 10, 15, 20, 25, 30, 35, 40, 45]]
+translation_param_set = [{"degrees": (-i, i), "translate": (0, i), "p": 1} for i in zero_1]
+affine_param_set = rotation_param_set+translation_param_set
+
+
 if __name__ == "__main__":
-    print("yoyo")
+    from torchvision.datasets import CIFAR10, Caltech101, MNIST
+    for dataset in [MNIST]:
+        test_augmentation_visual(noiseClass, dataset, param_sets=noise_param_set)
+        test_augmentation_visual(affineClass, dataset, param_sets=affine_param_set)
+        if dataset in [MNIST]:
+            continue
+        else:
+            test_augmentation_visual(cjClass, dataset, param_sets=color_param_set)

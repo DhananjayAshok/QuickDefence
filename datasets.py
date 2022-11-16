@@ -99,8 +99,8 @@ class BatchNormalize(nn.Module):
             self.mean = torch.Tensor(self.mean).to(x.device)
             self.tensors = True
         bs, c, h, w = x.shape
-        x = x.view(bs, c, h * w) - self.mean.expand(bs, 3).unsqueeze(2)
-        x = x / self.std.expand(bs, 3).unsqueeze(2)
+        x = x.view(bs, c, h * w) - self.mean.expand(bs, c).unsqueeze(2)
+        x = x / self.std.expand(bs, c).unsqueeze(2)
         return x.view(bs, c, h, w)
 
     def __repr__(self):
@@ -141,8 +141,8 @@ class InverseNormalize(nn.Module):
             self.std = torch.Tensor(self.trans.transforms[0].std).to(x.device)
             self.mean = torch.Tensor(self.trans.transforms[1].mean).to(x.device)
         bs, c, h, w = x.shape
-        x = x.view(bs, c, h * w) / self.std.expand(bs, 3).unsqueeze(2)
-        x = x - self.mean.expand(bs, 3).unsqueeze(2)
+        x = x.view(bs, c, h * w) / self.std.expand(bs, c).unsqueeze(2)
+        x = x - self.mean.expand(bs, c).unsqueeze(2)
         return x.view(bs, c, h, w)
 
     def __repr__(self):

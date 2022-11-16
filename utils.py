@@ -113,6 +113,15 @@ def get_attack_success_measures(model, inps, advs, true_labels):
     robustness = robustness / n_points
     return accuracy, robust_accuracy, conditional_robust_accuracy, robustness, success
 
-
+def repeat_batch_images(x, num_repeat):
+    """Receives a batch of images and repeat each image for num_repeat times
+    :param x: Images of shape (B, C, H, W)
+    :return: Images of shape (Bxnum_repeat, C, H, W) where each image is repeated
+        along the first dimension for num_repeat times
+    """
+    assert len(x.shape) == 4
+    x = x.unsqueeze(1).repeat(1, num_repeat, 1, 1, 1)
+    x = x.view((x.shape[0]*x.shape[1], x.shape[2], x.shape[3], x.shape[4]))
+    return x
 class Parameters:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

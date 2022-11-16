@@ -104,6 +104,8 @@ class DefendedNetwork(nn.Module):
         :return:
         """
         ret = None
+        # repeat [bs, smaple_rate, blah ]
+
         with torch.no_grad():
             if self.data_n_dims is None or len(x.shape) == self.data_n_dims:
                 ret = self.forward_no_batch(x, n_workers=n_workers)

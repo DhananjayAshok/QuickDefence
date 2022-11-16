@@ -26,8 +26,9 @@ if __name__ == "__main__":
         means=(0.4914, 0.4822, 0.4465), stds=(0.2023, 0.1994, 0.2010)
     )
     aug = noise
-    image_X = inverse_transform(X[0])
-    auged_X = aug(image_X)
+    image_X = inverse_transform(X)[0]
+    auged_X = aug(image_X)[0]
+    print(auged_X.shape)
     utils.show_grid(
         [image_X, auged_X], title="Augmentation", captions=["Image", "Augmented Image"]
     )

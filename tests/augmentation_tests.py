@@ -29,7 +29,7 @@ def test_augmentation_visual(Aug_class, dataset, param_sets=[], batch_size=5):
             imgs.append([image_X[i], auged_X[i]])
         utils.show_grid(
             imgs,
-            title=f"Noise on {dataset.__name__}|({param_set})",
+            title=f"{Aug_class.__name__} on {dataset.__name__}|({param_set})",
             captions=[["Image", "Augmented Image"] for i in range(batch_size)],
         )
 

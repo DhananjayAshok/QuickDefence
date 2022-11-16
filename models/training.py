@@ -3,13 +3,12 @@ import torch
 import torch.nn as nn
 from torchvision import models
 from datasets import get_torchvision_dataset
-from torchvision.datasets import CIFAR10
 from tqdm import tqdm
 from datasets import InverseNormalize, BatchNormalize
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def train(dataset_class=CIFAR10, n_classes=10, input_channels=3,
+def train(dataset_class, n_classes=10, input_channels=3,
           augmentation=lambda x: x, num_epochs=5, batch_size=32, lr=0.001, transform_location=2):
     train_dataset = get_torchvision_dataset(dataset_class, train=True)
     test_dataset = get_torchvision_dataset(dataset_class, train=False)
@@ -34,7 +33,7 @@ def train(dataset_class=CIFAR10, n_classes=10, input_channels=3,
 
     model = model.to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=5e-4)
 
     for epoch in range(num_epochs):
         for i, (imgs , labels) in tqdm(enumerate(train_loader), total=n_total_step):
@@ -71,5 +70,15 @@ def train(dataset_class=CIFAR10, n_classes=10, input_channels=3,
 
 
 if __name__ == "__main__":
-    train()
+    from torchvision.datasets import CIFAR10, Caltech101, MNIST
+    for dataset in [CIFAR10, Caltech101, MNIST]:
+        input_channels = 10
+        n_classes = 10
+        n_epochs = 10
+        if dataset == Caltech101:
+            n_classes = 101
+        if dataset == MNIST:
+            input_channels = 1
+            n_epochs = 20
+        train(dataset_class=dataset, input_channels=input_channels, n_classes=n_classes, num_epochs=n_epochs)
 

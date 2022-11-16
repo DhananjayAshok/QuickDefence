@@ -123,5 +123,14 @@ def repeat_batch_images(x, num_repeat):
     x = x.unsqueeze(1).repeat(1, num_repeat, 1, 1, 1)
     x = x.view((x.shape[0]*x.shape[1], x.shape[2], x.shape[3], x.shape[4]))
     return x
+
+
+def normalize_to_dict(normalize):
+    preprocessing = dict(
+        mean=list(normalize.mean), std=list(normalize.std), axis=-(len(normalize.mean))
+    )
+    return preprocessing
+
+
 class Parameters:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

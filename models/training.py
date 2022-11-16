@@ -1,4 +1,3 @@
-import __init__ # Allow executation of this file as script from parent folder
 import torch
 import torch.nn as nn
 from torchvision import models
@@ -69,10 +68,10 @@ def train(dataset_class, n_classes=10, input_channels=3,
     torch.save(model, f'models/{dataset_class.__name__}.pth')
 
 
-if __name__ == "__main__":
+def run_all():
     from torchvision.datasets import CIFAR10, Caltech101, MNIST
-    for dataset in [CIFAR10, Caltech101, MNIST]:
-        input_channels = 10
+    for dataset in [Caltech101]:
+        input_channels = 3
         n_classes = 10
         n_epochs = 10
         if dataset == Caltech101:
@@ -82,3 +81,6 @@ if __name__ == "__main__":
             n_epochs = 20
         train(dataset_class=dataset, input_channels=input_channels, n_classes=n_classes, num_epochs=n_epochs)
 
+
+if __name__ == "__main__":
+    run_all()

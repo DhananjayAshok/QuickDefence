@@ -22,10 +22,10 @@ class DataAugmentation(nn.Module):
 
 
 class CIFARAugmentation:
-    noise = kornia.augmentation.RandomGaussianNoise(std=0.05, p=1.0)
+    noise = kornia.augmentation.RandomGaussianNoise(std=0.05, p=0.3)
     color = kornia.augmentation.ColorJiggle(brightness=(0.9, 1.1), contrast=(1, 2), hue=(-0.25, 0.25), saturation=(0, 5),
-                                            p=1.0)
-    affine = kornia.augmentation.RandomAffine(degrees=(-20, 20), translate=(0, 0.2), p=1)
+                                            p=0.3)
+    affine = kornia.augmentation.RandomAffine(degrees=(-20, 20), translate=(0, 0.2), p=0.3)
     standard_aug = DataAugmentation([noise, color, affine])
 
 

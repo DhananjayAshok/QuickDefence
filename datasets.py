@@ -52,7 +52,7 @@ def get_torchvision_dataset(dataset_class, train=False):
         ])
     save_path = data_root + f"/{dataset_class.__name__}/"
     safe_mkdir(save_path)
-    if train:
+    if not dataset_class == ds.Caltech101:
         return dataset_class(save_path, transform=transform, download=True, train=train)
     else:
         return dataset_class(save_path, transform=transform, download=True)
@@ -147,20 +147,3 @@ class InverseNormalize(nn.Module):
 
     def __repr__(self):
         return self.trans.__repr__()
-
-
-class Resize:
-    def __init__(self, size, channels=3):
-        self.trans = transforms.Resize(size)
-        self.channels = channels
-
-    def __call__(self, x):
-        c, h, w = x.shape
-        if c < self.channels and c == 1:
-            in_x = torch.cat([x for i in range(self.channels)], dim=0)
-        elif c == self.channels:
-            in_x = x
-        else:
-            in_x = x[:self.channels]
-        return self.trans(in_x)
-

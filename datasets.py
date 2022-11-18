@@ -8,6 +8,26 @@ from utils import safe_mkdir
 data_root = "data/"
 
 
+def get_index_to_class(dataset_name):
+    if dataset_name == "mnist":
+        return lambda idx: {i: i for i in range(10)}[idx]
+    elif dataset_name == "cifar10":
+        return lambda idx: {
+            0: "plane",
+            1: "car",
+            2: "bird",
+            3: "cat",
+            4: "deer",
+            5: "dog",
+            6: "frog",
+            7: "horse",
+            8: "ship",
+            9: "truck",
+        }[idx]
+    else:
+        lambda x: x
+
+
 def sample_torch_dataset(dset, batch_size=32, shuffle=False):
     f, h = dset[0]
     X_shape = f.shape

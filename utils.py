@@ -113,6 +113,7 @@ def get_attack_success_measures(model, inps, advs, true_labels):
     robustness = robustness / n_points
     return accuracy, robust_accuracy, conditional_robust_accuracy, robustness, success
 
+
 def repeat_batch_images(x, num_repeat):
     """Receives a batch of images and repeat each image for num_repeat times
     :param x: Images of shape (B, C, H, W)
@@ -121,7 +122,7 @@ def repeat_batch_images(x, num_repeat):
     """
     assert len(x.shape) == 4
     x = x.unsqueeze(1).repeat(1, num_repeat, 1, 1, 1)
-    x = x.view((x.shape[0]*x.shape[1], x.shape[2], x.shape[3], x.shape[4]))
+    x = x.view((x.shape[0] * x.shape[1], x.shape[2], x.shape[3], x.shape[4]))
     return x
 
 
@@ -130,6 +131,23 @@ def normalize_to_dict(normalize):
         mean=list(normalize.mean), std=list(normalize.std), axis=-(len(normalize.mean))
     )
     return preprocessing
+
+
+def get_dataset_class(dataset_name="mnist"):
+    if dataset_name == "mnist":
+        from torchvision.datasets import MNIST
+
+        return MNIST
+    elif dataset_name == "cifar10":
+        from torchvision.datasets import CIFAR10
+
+        return CIFAR10
+    elif dataset_name == "caltech101":
+        from torchvision.datasets import Caltech101
+
+        return Caltech101
+    else:
+        raise ValueError(f"Dataset {dataset_name} is not supported")
 
 
 class Parameters:

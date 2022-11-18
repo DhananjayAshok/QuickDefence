@@ -1,7 +1,8 @@
-import torchvision.datasets as ds
-import torchvision.transforms as transforms
 import torch
 import torch.nn as nn
+import torchvision.datasets as ds
+import torchvision.transforms as transforms
+
 from utils import safe_mkdir
 
 data_root = "data/"
@@ -11,13 +12,13 @@ def sample_torch_dataset(dset, batch_size=32, shuffle=False):
     f, h = dset[0]
     X_shape = f.shape
     # We assume y is a scalar output
-    batch_shape = (batch_size, ) + X_shape
-    y_shape = (batch_size, )
+    batch_shape = (batch_size,) + X_shape
+    y_shape = (batch_size,)
     device = f.device
     X = torch.zeros(size=batch_shape).to(device)
     y = torch.zeros(size=y_shape).to(device)
     if shuffle:
-        idx = torch.randint(low=0, high=len(dset), size=(batch_size, ))
+        idx = torch.randint(low=0, high=len(dset), size=(batch_size,))
     else:
         idx = range(batch_size)
     for i, id in enumerate(idx):
@@ -38,18 +39,22 @@ def get_torchvision_dataset(dataset_class, train=False):
             ]
         )
     if dataset_class == ds.Caltech101:
-        transform = transforms.Compose([
-            transforms.Resize(size=(224, 224)),
-            transforms.ToTensor(),
-            BatchNormalize(means=(0.485, 0.456, 0.406), stds=(0.229, 0.224, 0.225)),
-            #transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-        ])
+        transform = transforms.Compose(
+            [
+                transforms.Resize(size=(224, 224)),
+                transforms.ToTensor(),
+                BatchNormalize(means=(0.485, 0.456, 0.406), stds=(0.229, 0.224, 0.225)),
+                # transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+            ]
+        )
     if dataset_class == ds.MNIST:
-        transform = transforms.Compose([
-            transforms.Resize(size=(28, 28)),
-            transforms.ToTensor(),
-            BatchNormalize(means=(0.127,), stds=(0.2959,)),
-        ])
+        transform = transforms.Compose(
+            [
+                transforms.Resize(size=(28, 28)),
+                transforms.ToTensor(),
+                BatchNormalize(means=(0.127,), stds=(0.2959,)),
+            ]
+        )
     save_path = data_root + f"/{dataset_class.__name__}/"
     safe_mkdir(save_path)
     if not dataset_class == ds.Caltech101:
@@ -64,10 +69,14 @@ def get_torchvision_dataset_sample(dataset_class, train=False, batch_size=32):
     return X, y.long()
 
 
+def get_normalization_transform(dataset_class):
+    return get_torchvision_dataset(dataset_class, train=False).transform.transforms[2]
+
+
 class BatchNormalize(nn.Module):
     def __init__(self, means=None, stds=None, normalize_transform=None):
         assert normalize_transform is not None or (
-                means is not None and stds is not None
+            means is not None and stds is not None
         )
         nn.Module.__init__(self)
         if normalize_transform is not None:
@@ -84,8 +93,8 @@ class BatchNormalize(nn.Module):
             channels = len(self.op.mean)
             if x.shape[0] == channels:
                 return self.op(x)
-            elif x.shape[0] < channels: # Assume this means its 1
-                #assert x.shape[0] == 1
+            elif x.shape[0] < channels:  # Assume this means its 1
+                # assert x.shape[0] == 1
                 in_x = torch.cat([x for i in range(channels)], dim=0)
                 return self.op(in_x)
             else:

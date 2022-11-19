@@ -3,6 +3,7 @@ import torch.nn as nn
 import torchvision.datasets as ds
 import torchvision.transforms as transforms
 
+import utils
 from utils import safe_mkdir
 
 data_root = "data/"
@@ -25,7 +26,7 @@ def get_index_to_class(dataset_name):
             9: "truck",
         }[idx]
     else:
-        lambda x: x
+        return lambda x: x
 
 
 def sample_torch_dataset(dset, batch_size=32, shuffle=False):
@@ -86,6 +87,8 @@ def get_torchvision_dataset(dataset_class, train=False):
 def get_torchvision_dataset_sample(dataset_class, train=False, batch_size=32):
     dset = get_torchvision_dataset(dataset_class, train=train)
     X, y = sample_torch_dataset(dset, batch_size=batch_size, shuffle=True)
+    X = X.to(utils.Parameters.device)
+    y = y.to(utils.Parameters.device)
     return X, y.long()
 
 

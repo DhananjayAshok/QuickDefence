@@ -1,6 +1,7 @@
 import __init__  # Allow executation of this file as script from parent folder
 from foolbox.attacks import LinfPGD
 
+import utils
 from attacks import FoolboxImageAttack
 from datasets import (
     InverseNormalize,
@@ -13,11 +14,10 @@ from utils import get_dataset_class, normalize_to_dict, show_grid
 
 
 def test_attack_visual(
-    attack_class=LinfPGD, dataset_name="mnist", n_samples=5, do_pred=False
-):
+    attack_class=LinfPGD, dataset_name="mnist", n_samples=5, do_pred=False, attack_params={}):
     # Get model and attack
     dataset_class = get_dataset_class(dataset_name)
-    model = get_model(dataset_class)
+    model = get_model(dataset_class).to(utils.Parameters.device)
     model.eval()
     attack = FoolboxImageAttack(foolbox_attack_class=attack_class)
 
@@ -30,7 +30,7 @@ def test_attack_visual(
 
     # Get adversarial examples
     preprocessing = normalize_to_dict(normalize_transform)
-    adv_x = attack(model, input_batch=X, true_labels=y, preprocessing=preprocessing)
+    adv_x = attack(model, input_batch=X, true_labels=y, preprocessing=preprocessing, **attack_params)
     if do_pred:
         adv_pred = model(adv_x).argmax(-1)
 
@@ -57,4 +57,4 @@ def test_attack_visual(
 
 
 if __name__ == "__main__":
-    test_attack_visual(dataset_name="cifar10", n_samples=1, do_pred=True)
+    test_attack_visual(dataset_name="caltech101", n_samples=1, do_pred=True)

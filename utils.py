@@ -61,8 +61,25 @@ def show_grid(imgs, title=None, captions=None):
     plt.show()
 
 
+def logit_or_pred_to_pred(pred):
+    if pred is None:
+        return pred
+    if len(pred.shape) == 2:
+        if pred.shape[1] == 1:
+            return pred.view((len(pred), ))
+        else:
+            return pred.argmax(-1)
+    else:
+        return pred
+
+
 def show_adversary_vs_original_with_preds(advs, img_X, y, adv_pred, pred, defended_pred=None, n_show=5,
                                           index_to_class=None):
+    adv_pred = logit_or_pred_to_pred(adv_pred)
+    pred = logit_or_pred_to_pred(pred)
+    defended_pred = logit_or_pred_to_pred(defended_pred)
+    if n_show <= 0:
+        n_show = len(y)
     if index_to_class is None:
         index_to_class = lambda x: x
     imgs = []
@@ -70,13 +87,13 @@ def show_adversary_vs_original_with_preds(advs, img_X, y, adv_pred, pred, defend
     for i in range(n_show):
         imgs.append([advs[i], img_X[i]])
         if defended_pred is not None:
-            caption = [f"pred={index_to_class(adv_pred[i].argmax(-1).item())}, "
+            caption = [f"pred={index_to_class(adv_pred[i].item())}, "
                         f"defended pred={index_to_class(defended_pred[i].item())}",
-                        f"pred={index_to_class(pred[i].argmax(-1).item())}, "
+                        f"pred={index_to_class(pred[i].item())}, "
                         f"label={index_to_class(y[i].item())}"]
         else:
-            caption = [f"pred={index_to_class(adv_pred[i].argmax(-1).item())}, ",
-                       f"pred={index_to_class(pred[i].argmax(-1).item())}, "
+            caption = [f"pred={index_to_class(adv_pred[i].item())}, ",
+                       f"pred={index_to_class(pred[i].item())}, "
                        f"label={index_to_class(y[i].item())}"]
         # print(caption)
         captions.append(caption)
@@ -113,14 +130,16 @@ def get_attack_success_measures(model, inps, advs, true_labels):
     robust_accuracy = 0
     conditional_robust_accuracy = 0
     robustness = 0
-    inp_shape = (1,) + inps[0].shape
-    n_points = len(inps)
     n_correct = 0
+    inp_preds = model(inps).argmax(-1)
+    adv_preds = model(advs).argmax(-1)
+    n_points = len(true_labels)
+    print(true_labels)
+    print(inp_preds)
+    print(adv_preds)
     for i in range(n_points):
-        inp = inps[i].reshape(inp_shape)
-        adv = advs[i].reshape(inp_shape)
-        inp_pred = model(inp).argmax(-1)[0]
-        adv_pred = model(adv).argmax(-1)[0]
+        inp_pred = inp_preds[i]
+        adv_pred = adv_preds[i]
         label = true_labels[i]
         correct = inp_pred == label
         adv_correct = adv_pred == label
@@ -179,4 +198,5 @@ def get_dataset_class(dataset_name="mnist"):
 
 
 class Parameters:
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = "cpu"

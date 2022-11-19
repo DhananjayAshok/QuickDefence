@@ -9,6 +9,7 @@ would likley have a succesful defence method.
 import torch
 import numpy as np
 import torch.multiprocessing as mp
+from tqdm import tqdm
 
 
 def image_defence_density(
@@ -16,9 +17,11 @@ def image_defence_density(
     adv_image,
     true_label,
     defence=None,
+    original_preds = None,
     n_samples=1000,
     n_workers=1,
     robustness=False,
+    de_adversarialize = False
 ):
     if len(adv_image.shape) == 3:
         new_shape = (1,) + adv_image.shape
@@ -28,15 +31,17 @@ def image_defence_density(
         adv_image,
         true_label,
         defence,
-        n_samples,
+        original_preds=original_preds,
+        n_samples=n_samples,
         n_workers=n_workers,
         robustness=robustness,
+        de_adversarialize=de_adversarialize
     )
 
 
 def defence_density(
-    model, adv_inps, true_labels, defence, n_samples=1000, n_workers=1, robustness=False
-):
+    model, adv_inps, true_labels, defence, original_preds=None, n_samples=1000, n_workers=1, robustness=False,
+        de_adversarialize=False):
     """
     if robustnes is false Returns how accuracy of the model on average when defence is applied to this adv_inp
     if robustness is true returns how likely the model prediction is to change when defence is applied.
@@ -44,23 +49,29 @@ def defence_density(
     :param model:
     :param adv_inp:
     :param true_label:
-    :param defence:
+    :param defence: Augmentation to use
+    :param original_pred: the predictions of the model on the non adversarial inputs
     :param n_samples:
     :param n_workers:
-    :param robustness:
+    :param robustness: True iff you want to measure density of defence(model)(adv_inps) = model(adv_inp)
+    :param de_adversarialize: True iff you want to measure density of defence(model)(adv_inps) = original_pred
     :return:
     """
     all_results = []
-    for i in range(len(true_labels)):
+    for i in tqdm(range(len(true_labels), total=len(true_labels))):
         if n_workers == 1:
             density = 0
             for n in range(n_samples):
+                op = None
+                if original_preds is not None:
+                    op = original_preds[i]
                 density += defence_density_single(
-                    model, adv_inps[i], true_labels[i], defence, robustness=robustness
+                    model, adv_inps[i:i+1], true_labels[i], defence, op,
+                    robustness=robustness, de_adversarialize=de_adversarialize
                 )
             all_results.append(density / n_samples)
         else:
-            inp_args = (model, adv_inps[i], defence, true_labels[i], robustness)
+            inp_args = (model, adv_inps[i:i+1], defence, true_labels[i], robustness)
             pool = mp.Pool(processes=n_workers)
             inps = [inp_args for i in range(n_samples)]
             res = pool.starmap(defence_density_single, inps)
@@ -69,7 +80,7 @@ def defence_density(
     return all_results
 
 
-def defence_density_single(model, adv_inp, true_label, defence, robustness):
+def defence_density_single(model, adv_inp, true_label, defence, original_pred, robustness, de_adversarialize):
     if defence is None:
         new_inp = adv_inp
     else:
@@ -78,6 +89,8 @@ def defence_density_single(model, adv_inp, true_label, defence, robustness):
     if robustness:
         adv_pred = model(adv_inp).argmax(-1)[0]
         succ = adv_pred != pred
+    elif original_pred is not None and de_adversarialize:
+        succ = pred == original_pred
     else:
         succ = pred == true_label
     if succ:

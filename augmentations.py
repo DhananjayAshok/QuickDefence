@@ -30,17 +30,17 @@ class CIFARAugmentation:
 
 
 class CaltechAugmentation:
-    noise = kornia.augmentation.RandomGaussianNoise(std=0.1, p=1.0)
+    noise = kornia.augmentation.RandomGaussianNoise(std=0.1, p=0.3)
     color = kornia.augmentation.ColorJiggle(brightness=(0.75, 1.1), contrast=(1, 2), hue=(-0.4, 0.4),
                                             saturation=(0, 5),
-                                            p=1.0)
-    affine = kornia.augmentation.RandomAffine(degrees=(-45, 45), translate=(0, 0.25), p=1)
+                                            p=0.3)
+    affine = kornia.augmentation.RandomAffine(degrees=(-45, 45), translate=(0, 0.25), p=0.3)
     standard_aug = DataAugmentation([noise, color, affine])
 
 
 class MNISTAugmentation:
-    noise = kornia.augmentation.RandomGaussianNoise(std=0.005, p=1.0)
-    affine = kornia.augmentation.RandomAffine(degrees=(-45, 45), translate=(0, 0.35), p=1)
+    noise = kornia.augmentation.RandomGaussianNoise(std=0.005, p=0.3)
+    affine = kornia.augmentation.RandomAffine(degrees=(-45, 45), translate=(0, 0.35), p=0.3)
     standard_aug = DataAugmentation([noise, affine])
 
 

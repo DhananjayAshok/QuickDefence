@@ -55,6 +55,6 @@ class FoolboxImageAttack:
                 max_rotation=self.params["max_rotation"],
                 num_rotations=self.params["num_rotations"],
             )
-            raw_advs, _, _ = attack(fmodel, images, labels)
+            raw_advs, clipped, _ = attack(fmodel, images, labels)
             raw_advs = raw_advs.raw
         return raw_advs

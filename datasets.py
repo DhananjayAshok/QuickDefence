@@ -9,7 +9,21 @@ from utils import safe_mkdir
 data_root = "data/"
 
 
-def get_index_to_class(dataset_name):
+def class_to_name(dataset_class):
+    if dataset_class == ds.MNIST:
+        return "mnist"
+    elif dataset_class == ds.CIFAR10:
+        return "cifar10"
+    elif dataset_class == ds.Caltech101:
+        return "caltech101"
+    else:
+        raise ValueError
+
+
+def get_index_to_class(dataset_name=None, dataset_class=None):
+    assert dataset_class is not None or dataset_name is not None
+    if dataset_class is not None:
+        dataset_name = class_to_name(dataset_class=dataset_class)
     if dataset_name == "mnist":
         return lambda idx: {i: i for i in range(10)}[idx]
     elif dataset_name == "cifar10":

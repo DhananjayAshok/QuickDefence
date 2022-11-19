@@ -61,6 +61,34 @@ def show_grid(imgs, title=None, captions=None):
     plt.show()
 
 
+def show_adversary_vs_original_with_preds(advs, img_X, y, adv_pred, pred, defended_pred=None, n_show=5,
+                                          index_to_class=None):
+    if index_to_class is None:
+        index_to_class = lambda x: x
+    imgs = []
+    captions = []
+    for i in range(n_show):
+        imgs.append([advs[i], img_X[i]])
+        if defended_pred is not None:
+            caption = [f"pred={index_to_class(adv_pred[i].argmax(-1).item())}, "
+                        f"defended pred={index_to_class(defended_pred[i].item())}",
+                        f"pred={index_to_class(pred[i].argmax(-1).item())}, "
+                        f"label={index_to_class(y[i].item())}"]
+        else:
+            caption = [f"pred={index_to_class(adv_pred[i].argmax(-1).item())}, ",
+                       f"pred={index_to_class(pred[i].argmax(-1).item())}, "
+                       f"label={index_to_class(y[i].item())}"]
+        # print(caption)
+        captions.append(caption)
+    # print(captions)
+    # print(len(captions))
+    # print([len(x) for x in captions])
+    # print(len(imgs))
+    # print([len(x) for x in imgs])
+
+    show_grid(imgs, title="Adversarial Image vs Original Image", captions=captions)
+        
+        
 def get_accuracy_logits(y, logits):
     return get_accuracy(y, logits.argmax(-1))
 

@@ -57,4 +57,4 @@ def test_attack_visual(
 
 
 if __name__ == "__main__":
-    test_attack_visual(dataset_name="caltech101", n_samples=1, do_pred=True, attack_params={"epsilon": 0.001})
+    test_attack_visual(dataset_name="caltech101", n_samples=1, do_pred=True, attack_params={"epsilon": 0.0000001})

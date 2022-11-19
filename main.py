@@ -74,16 +74,15 @@ def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), attack_cl
         captions=[f"pred={adv_pred[0].argmax(-1).data}, defended pred={defended_pred[0].data}",
                   f"pred={pred[0].argmax(-1).data}, label={y[0].argmax(-1).data}"],
     )
-    print(
-        image_defence_density(
-            model, advs[0], y[0], n_samples=1000, n_workers=1
-        )
+    density = image_defence_density(
+        model, advs, y, n_samples=1000, n_workers=1
     )
-    print(
-        image_defence_density(
-            model, advs[0], y[0], n_samples=1000, n_workers=1, robustness=True
+    robust_density = image_defence_density(
+            model, advs, y, n_samples=1000, n_workers=1, robustness=True
         )
-    )
+    print(f"Density: Avg {density.mean()}, Std: {density.std()}, Max: {density.max()}, Min: {density.min()}")
+    print(f"Robust Density: Avg {robust_density.mean()}, Std: {robust_density.std()}, "
+          f"Max: {robust_density.max()}, Min: {robust_density.min()}")
 
 
 if __name__ == "__main__":

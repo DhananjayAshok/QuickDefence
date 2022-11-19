@@ -7,6 +7,7 @@ would likley have a succesful defence method.
 """
 
 import torch
+import numpy as np
 import torch.multiprocessing as mp
 
 
@@ -34,7 +35,7 @@ def image_defence_density(
 
 
 def defence_density(
-    model, adv_inp, true_label, defence, n_samples=1000, n_workers=1, robustness=False
+    model, adv_inps, true_labels, defence, n_samples=1000, n_workers=1, robustness=False
 ):
     """
     if robustnes is false Returns how accuracy of the model on average when defence is applied to this adv_inp
@@ -49,19 +50,23 @@ def defence_density(
     :param robustness:
     :return:
     """
-    if n_workers == 1:
-        density = 0
-        for n in range(n_samples):
-            density += defence_density_single(
-                model, adv_inp, true_label, defence, robustness=robustness
-            )
-        return density / n_samples
-    else:
-        inp_args = (model, adv_inp, defence, true_label, robustness)
-        pool = mp.Pool(processes=n_workers)
-        inps = [inp_args for i in range(n_samples)]
-        res = pool.starmap(defence_density_single, inps)
-        return sum(res) / n_samples
+    all_results = []
+    for i in range(len(true_labels)):
+        if n_workers == 1:
+            density = 0
+            for n in range(n_samples):
+                density += defence_density_single(
+                    model, adv_inps[i], true_labels[i], defence, robustness=robustness
+                )
+            all_results.append(density / n_samples)
+        else:
+            inp_args = (model, adv_inps[i], defence, true_labels[i], robustness)
+            pool = mp.Pool(processes=n_workers)
+            inps = [inp_args for i in range(n_samples)]
+            res = pool.starmap(defence_density_single, inps)
+            all_results.append(sum(res) / n_samples)
+    all_results = np.array(all_results)
+    return all_results
 
 
 def defence_density_single(model, adv_inp, true_label, defence, robustness):

@@ -58,7 +58,7 @@ def defence_density(
     :return:
     """
     all_results = []
-    for i in tqdm(range(len(true_labels), total=len(true_labels))):
+    for i in tqdm(range(len(true_labels)), total=len(true_labels)):
         if n_workers == 1:
             density = 0
             for n in range(n_samples):

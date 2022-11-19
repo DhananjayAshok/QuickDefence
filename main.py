@@ -13,9 +13,9 @@ from defence import DefendedNetwork
 from models import get_model
 
 
-def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_samples=50,
+def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_samples=32,
                            attack_class=LinfPGD, attack_params=None,
-                           aug=None, sample_rate=20,
+                           aug=None, sample_rate=10,
                            show=True):
     transform = get_torchvision_dataset(dataset_class, train=False).transform.transforms[2]
     index_to_class = get_index_to_class(dataset_class=dataset_class)
@@ -57,6 +57,7 @@ def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_sample
     adv_img = advs
     advs = batch_transform(advs)
     adv_pred = model(advs).argmin(-1)
+    defended_adv_pred = defended(advs).argmin(-1)
     (
         accuracy,
         robust_accuracy,
@@ -75,9 +76,9 @@ def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_sample
     print(accuracy, robust_accuracy, conditional_robust_accuracy, robustness)
 
     utils.show_adversary_vs_original_with_preds(adv_img, img_X=image_X, y=y, adv_pred=adv_pred, pred=pred,
-                                                defended_pred=defended_pred, index_to_class=index_to_class, n_show=5)
+                                                defended_pred=defended_adv_pred, index_to_class=index_to_class,
+                                                n_show=5)
 
-    """
     density = image_defence_density(
         model, advs, y, defence=aug, n_samples=1000, n_workers=1
     )
@@ -94,12 +95,11 @@ def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_sample
           f"Max: {robust_density.max()}, Min: {robust_density.min()}")
     print(f"De-Adversarial Density: Avg {de_adversarial_density.mean()}, Std: {de_adversarial_density.std()}, "
           f"Max: {de_adversarial_density.max()}, Min: {de_adversarial_density.min()}")
-          
-    """
+
 
 
 if __name__ == "__main__":
     import torchvision.datasets as ds
     mp.set_start_method("spawn")
     device = utils.Parameters.device
-    run_defence_experiment(dataset_class=ds.Caltech101, output_shape=(101,), attack_params={"epsilon": 0.00000001})
+    run_defence_experiment(dataset_class=ds.Caltech101, output_shape=(101,), attack_params={"epsilon": 0.01})

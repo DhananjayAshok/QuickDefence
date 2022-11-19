@@ -134,9 +134,6 @@ def get_attack_success_measures(model, inps, advs, true_labels):
     inp_preds = model(inps).argmax(-1)
     adv_preds = model(advs).argmax(-1)
     n_points = len(true_labels)
-    print(true_labels)
-    print(inp_preds)
-    print(adv_preds)
     for i in range(n_points):
         inp_pred = inp_preds[i]
         adv_pred = adv_preds[i]
@@ -198,5 +195,5 @@ def get_dataset_class(dataset_name="mnist"):
 
 
 class Parameters:
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    device = "cpu"
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    #device = "cpu"

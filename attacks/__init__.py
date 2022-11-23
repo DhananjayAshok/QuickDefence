@@ -10,9 +10,11 @@ Current List of options:
 import eagerpy as ep
 import torch.nn as nn
 from foolbox import PyTorchModel, accuracy, samples
-from foolbox.attacks import SpatialAttack
+from foolbox.attacks import LinfPGD, SpatialAttack
 
 import utils
+
+ATTACKS = {"linf": LinfPGD}
 
 
 class FoolboxImageAttack:

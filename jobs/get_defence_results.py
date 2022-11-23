@@ -4,14 +4,18 @@ from pathlib import Path
 
 import init_path
 import torch
-import torchvision.datasets as ds
-from foolbox.attacks import LinfPGD
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from attacks import FoolboxImageAttack
+from attacks import ATTACKS, FoolboxImageAttack
 from augmentations import get_augmentation
-from datasets import BatchNormalize, InverseNormalize, get_torchvision_dataset
+from datasets import (
+    DATASETS,
+    NUM_LABELS,
+    BatchNormalize,
+    InverseNormalize,
+    get_torchvision_dataset,
+)
 from defence import DefendedNetwork
 from models import get_model
 from utils import (
@@ -20,10 +24,6 @@ from utils import (
     get_robustness,
     normalize_to_dict,
 )
-
-DATASETS = {"cifar10": ds.CIFAR10, "caltech101": ds.Caltech101, "mnist": ds.MNIST}
-ATTACKS = {"linf": LinfPGD}
-NUM_LABELS = {"cifar10": 10, "caltech101": 101, "mnist": 10}
 
 
 def get_parser():
@@ -101,6 +101,7 @@ def get_defence_results(
 
         def_adv_pred = defended_model(adv_X).argmin(-1)
         all_def_adv_pred = torch.cat((all_def_adv_pred, def_adv_pred))
+        break
 
     metrics = {
         "Undefended Clean Accuracy": get_accuracy(all_y, all_undef_pred).item(),

@@ -219,6 +219,15 @@ def get_dataset_class(dataset_name="mnist"):
         raise ValueError(f"Dataset {dataset_name} is not supported")
 
 
+def get_attack_class(attack_name="linf"):
+    if attack_name == "linf":
+        from foolbox.attacks import LinfPGD
+
+        return LinfPGD
+    else:
+        raise ValueError(f"Attack {attack_name} is not supported")
+
+
 class Parameters:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # device = "cpu"

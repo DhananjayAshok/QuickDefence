@@ -70,6 +70,10 @@ def get_defence_results(
     for (X, y) in tqdm(dataloader, total=len(dataset)):
         all_y = torch.cat((all_y, y))
 
+        # Get undefended clean predictions
+        undef_pred = model(X).argmax(-1)
+        all_undef_pred = torch.cat((all_undef_pred, undef_pred))
+
         # Get adversarial image
         preprocessing = normalize_to_dict(transform)
         adv_X = attack(
@@ -77,11 +81,8 @@ def get_defence_results(
         )
         adv_X = batch_transform(adv_X)
 
-        # Get undefended predictions
-        undef_pred = model(X).argmin(-1)
-        all_undef_pred = torch.cat((all_undef_pred, undef_pred))
-
-        undef_adv_pred = model(adv_X).argmin(-1)
+        # Get undefended adv predictions
+        undef_adv_pred = model(adv_X).argmax(-1)
         all_undef_adv_pred = torch.cat((all_undef_adv_pred, undef_adv_pred))
 
         # Get defended network
@@ -96,13 +97,12 @@ def get_defence_results(
         )
 
         # Get defended predictions
-        def_pred = defended_model(X).argmin(-1)
+        def_pred = defended_model(X).argmax(-1)
         all_def_pred = torch.cat((all_def_pred, def_pred))
 
-        def_adv_pred = defended_model(adv_X).argmin(-1)
+        def_adv_pred = defended_model(adv_X).argmax(-1)
         all_def_adv_pred = torch.cat((all_def_adv_pred, def_adv_pred))
         break
-
     metrics = {
         "Undefended Clean Accuracy": get_accuracy(all_y, all_undef_pred).item(),
         "Undefended Advsarial Accuracy": get_accuracy(all_y, all_undef_adv_pred).item(),
@@ -133,7 +133,7 @@ def get_defence_results(
 
 if __name__ == "__main__":
     args = get_parser().parse_args()
-    attack_params = {"epsilon": args.epsilon}
+    attack_params = {"eps": args.epsilon}
     print(f"Experiment parameters: {args}")
     print(f"{vars(args)}")
 

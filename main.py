@@ -71,13 +71,15 @@ def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_sample
         robust_accuracy,
         conditional_robust_accuracy,
         robustness,
-        success,
+        success_2,
     ) = utils.get_attack_success_measures(defended, inps=X, advs=advs, true_labels=y)
     print(accuracy, robust_accuracy, conditional_robust_accuracy, robustness)
 
     utils.show_adversary_vs_original_with_preds(adv_img, img_X=image_X, y=y, adv_pred=adv_pred, pred=pred,
                                                 defended_pred=defended_adv_pred, index_to_class=index_to_class,
                                                 n_show=5)
+    advs = advs[success]
+    y = y[success]
 
     density = image_defence_density(
         model, advs, y, defence=aug, n_samples=1000, n_workers=1

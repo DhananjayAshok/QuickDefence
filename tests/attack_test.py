@@ -1,9 +1,11 @@
 import __init__  # Allow executation of this file as script from parent folder
+import torch
 from foolbox.attacks import LinfPGD
 
 import utils
 from attacks import FoolboxImageAttack
 from datasets import (
+    BatchNormalize,
     InverseNormalize,
     get_index_to_class,
     get_normalization_transform,
@@ -14,7 +16,12 @@ from utils import get_dataset_class, normalize_to_dict, show_grid
 
 
 def test_attack_visual(
-    attack_class=LinfPGD, dataset_name="mnist", n_samples=5, do_pred=False, attack_params=None):
+    attack_class=LinfPGD,
+    dataset_name="mnist",
+    n_samples=5,
+    do_pred=False,
+    attack_params=None,
+):
     # Get model and attack
     dataset_class = get_dataset_class(dataset_name)
     model = get_model(dataset_class).to(utils.Parameters.device)
@@ -56,5 +63,39 @@ def test_attack_visual(
     )
 
 
+def test_attack_maginitude(dataset_name, attack_name, attack_params):
+    # Get model and attack
+    dataset_class = get_dataset_class(dataset_name)
+    attack_class = utils.get_attack_class(attack_name)
+    model = get_model(dataset_class).to(utils.Parameters.device)
+    model.eval()
+    attack = FoolboxImageAttack(foolbox_attack_class=attack_class, params=attack_params)
+
+    # Get samples to apply attack
+    normalize_transform = get_normalization_transform(dataset_class)
+    inverse_transform = InverseNormalize(normalize_transform=normalize_transform)
+    X, y = get_torchvision_dataset_sample(dataset_class, batch_size=1)
+    image_X = inverse_transform(X)
+
+    # Get adversarial examples
+    preprocessing = normalize_to_dict(normalize_transform)
+    adv_x = attack(model, input_batch=X, true_labels=y, preprocessing=preprocessing)
+    # batch_transform = BatchNormalize(normalize_transform=normalize_transform)
+    # adv_x = batch_transform(adv_x)
+
+    diff = torch.abs(image_X - adv_x)
+    print(f"Image dimension: {image_X.shape}")
+    print(f"Max perturbation: {torch.max(diff)}")
+    print(f"Perturbation L1 norm: {torch.sum(diff)}")
+
+
 if __name__ == "__main__":
-    test_attack_visual(dataset_name="caltech101", n_samples=1, do_pred=True, attack_params={"epsilon": 0.0000001})
+    test_attack_maginitude(
+        "caltech101", attack_name="linf", attack_params={"epsilon": 1e-2}
+    )
+    # test_attack_visual(
+    #     dataset_name="caltech101",
+    #     n_samples=1,
+    #     do_pred=True,
+    #     attack_params={"epsilon": 0.0000001},
+    # )

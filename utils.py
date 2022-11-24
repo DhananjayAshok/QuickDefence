@@ -66,15 +66,16 @@ def logit_or_pred_to_pred(pred):
         return pred
     if len(pred.shape) == 2:
         if pred.shape[1] == 1:
-            return pred.view((len(pred), ))
+            return pred.view((len(pred),))
         else:
             return pred.argmax(-1)
     else:
         return pred
 
 
-def show_adversary_vs_original_with_preds(advs, img_X, y, adv_pred, pred, defended_pred=None, n_show=5,
-                                          index_to_class=None):
+def show_adversary_vs_original_with_preds(
+    advs, img_X, y, adv_pred, pred, defended_pred=None, n_show=5, index_to_class=None
+):
     adv_pred = logit_or_pred_to_pred(adv_pred)
     pred = logit_or_pred_to_pred(pred)
     defended_pred = logit_or_pred_to_pred(defended_pred)
@@ -87,14 +88,18 @@ def show_adversary_vs_original_with_preds(advs, img_X, y, adv_pred, pred, defend
     for i in range(n_show):
         imgs.append([advs[i], img_X[i]])
         if defended_pred is not None:
-            caption = [f"pred={index_to_class(adv_pred[i].item())}, "
-                        f"defended pred={index_to_class(defended_pred[i].item())}",
-                        f"pred={index_to_class(pred[i].item())}, "
-                        f"label={index_to_class(y[i].item())}"]
+            caption = [
+                f"pred={index_to_class(adv_pred[i].item())}, "
+                f"defended pred={index_to_class(defended_pred[i].item())}",
+                f"pred={index_to_class(pred[i].item())}, "
+                f"label={index_to_class(y[i].item())}",
+            ]
         else:
-            caption = [f"pred={index_to_class(adv_pred[i].item())}, ",
-                       f"pred={index_to_class(pred[i].item())}, "
-                       f"label={index_to_class(y[i].item())}"]
+            caption = [
+                f"pred={index_to_class(adv_pred[i].item())}, ",
+                f"pred={index_to_class(pred[i].item())}, "
+                f"label={index_to_class(y[i].item())}",
+            ]
         # print(caption)
         captions.append(caption)
     # print(captions)
@@ -104,14 +109,34 @@ def show_adversary_vs_original_with_preds(advs, img_X, y, adv_pred, pred, defend
     # print([len(x) for x in imgs])
 
     show_grid(imgs, title="Adversarial Image vs Original Image", captions=captions)
-        
-        
+
+
 def get_accuracy_logits(y, logits):
     return get_accuracy(y, logits.argmax(-1))
 
 
 def get_accuracy(y, pred):
     return (y == pred).float().mean()
+
+
+def get_conditional_robustness(y, clean_pred, adv_pred):
+    """
+    :return:
+        conditional_robustness
+        (accuracy on adversaries whos parent image is correctly classified).
+    """
+    y, clean_pred, adv_pred = (
+        y.detach().numpy(),
+        clean_pred.detach().numpy(),
+        adv_pred.detach().numpy(),
+    )
+    idc = np.where(y == clean_pred)[0]
+    return np.mean(clean_pred[idc] == adv_pred[idc])
+
+
+def get_robustness(pred, adv_pred):
+    pred, adv_pred = pred.detach().numpy(), adv_pred.detach().numpy()
+    return np.mean(pred == adv_pred)
 
 
 def get_attack_success_measures(model, inps, advs, true_labels):
@@ -194,6 +219,15 @@ def get_dataset_class(dataset_name="mnist"):
         raise ValueError(f"Dataset {dataset_name} is not supported")
 
 
+def get_attack_class(attack_name="linf"):
+    if attack_name == "linf":
+        from foolbox.attacks import LinfPGD
+
+        return LinfPGD
+    else:
+        raise ValueError(f"Attack {attack_name} is not supported")
+
+
 class Parameters:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    #device = "cpu"
+    # device = "cpu"

@@ -7,6 +7,8 @@ import utils
 from utils import safe_mkdir
 
 data_root = "data/"
+DATASETS = {"cifar10": ds.CIFAR10, "caltech101": ds.Caltech101, "mnist": ds.MNIST}
+NUM_LABELS = {"cifar10": 10, "caltech101": 101, "mnist": 10}
 
 
 def class_to_name(dataset_class):
@@ -68,9 +70,7 @@ def get_torchvision_dataset(dataset_class, train=False):
             [
                 transforms.Resize(size=(64, 64)),
                 transforms.ToTensor(),
-                transforms.Normalize(
-                    (0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)
-                ),
+                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
             ]
         )
     if dataset_class == ds.Caltech101:
@@ -112,9 +112,7 @@ def get_normalization_transform(dataset_class):
 
 class BatchNormalize(nn.Module):
     def __init__(self, means=None, stds=None, normalize_transform=None):
-        assert normalize_transform is not None or (
-            means is not None and stds is not None
-        )
+        assert normalize_transform is not None or (means is not None and stds is not None)
         nn.Module.__init__(self)
         if normalize_transform is not None:
             means = normalize_transform.mean
@@ -155,9 +153,7 @@ class BatchNormalize(nn.Module):
 
 class InverseNormalize(nn.Module):
     def __init__(self, means=None, stds=None, normalize_transform=None):
-        assert normalize_transform is not None or (
-            means is not None and stds is not None
-        )
+        assert normalize_transform is not None or (means is not None and stds is not None)
         nn.Module.__init__(self)
         if normalize_transform is not None:
             means = normalize_transform.mean

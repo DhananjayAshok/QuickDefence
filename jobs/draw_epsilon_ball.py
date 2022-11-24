@@ -6,7 +6,7 @@ import init_path
 import numpy as np
 import torch
 
-from attacks import ATTACKS, FoolboxImageAttack
+from attacks import ATTACKS, ImageAttack
 from datasets import (
     DATASETS,
     BatchNormalize,
@@ -50,7 +50,7 @@ def draw_episilon_ball(
 
     # Get adversarial image
     attack_class = ATTACKS[attack_name]
-    attack = FoolboxImageAttack(foolbox_attack_class=attack_class, params=attack_params)
+    attack = ImageAttack(attack_class=attack_class, params=attack_params)
     transform = get_normalization_transform(DATASETS[dataset_name])
     preprocessing = normalize_to_dict(transform)
     adv_X = attack(model, X, true_labels=y, preprocessing=preprocessing)
@@ -80,7 +80,7 @@ def draw_episilon_ball(
 
 if __name__ == "__main__":
     args = get_parser().parse_args()
-    attack_params = {"epsilon": args.attack_epsilon}
+    attack_params = {"eps": args.attack_epsilon}
     draw_episilon_ball(
         dataset_name=args.dataset,
         attack_name=args.attack,

@@ -219,10 +219,15 @@ def get_dataset_class(dataset_name="mnist"):
         raise ValueError(f"Dataset {dataset_name} is not supported")
 
 
-def get_attack_class(attack_name="linf"):
-    if attack_name == "linf":
-        from foolbox.attacks import LinfPGD
-        return LinfPGD
+def get_attack_class(attack_name="pgd"):
+    if attack_name == "pgd" or attack_name == "linf":
+        from torchattacks import PGD
+
+        return PGD
+    if attack_name == "pdg_l2":
+        from torchattacks import PGDL2
+
+        return PGDL2
     else:
         raise ValueError(f"Attack {attack_name} is not supported")
 

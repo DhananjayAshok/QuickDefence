@@ -1,20 +1,20 @@
 import torch.multiprocessing as mp
 import torchvision.transforms as transforms
-from foolbox.attacks import LinfPGD
 from torchvision.datasets import CIFAR10
-
+from torchattacks import PGD
 import utils
 from adversarial_density import image_defence_density
-from attacks import FoolboxImageAttack
+from attacks import ImageAttack
 from augmentations import get_augmentation
 from datasets import InverseNormalize, get_torchvision_dataset_sample, BatchNormalize, get_torchvision_dataset, \
     get_index_to_class
 from defence import DefendedNetwork
 from models import get_model
+import torchvision.datasets as ds
 
 
 def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_samples=32,
-                           attack_class=LinfPGD, attack_params=None,
+                           attack_class=PGD, attack_params=None,
                            aug=None, sample_rate=10,
                            show=True, density=False):
     transform = get_torchvision_dataset(dataset_class, train=False).transform.transforms[2]
@@ -50,12 +50,11 @@ def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_sample
         f"{utils.get_accuracy(y, defended_pred)}"
     )
 
-    attack = FoolboxImageAttack(foolbox_attack_class=attack_class, params=attack_params)
+    attack = ImageAttack(attack_class=attack_class, params=attack_params)
     advs = attack(
         model=model, input_batch=X, true_labels=y, preprocessing=preprocessing
     )
     adv_img = advs
-    advs = batch_transform(advs)
     adv_pred = model(advs).argmin(-1)
     defended_adv_pred = defended(advs).argmin(-1)
     (
@@ -102,7 +101,6 @@ def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_sample
 
 
 if __name__ == "__main__":
-    import torchvision.datasets as ds
     mp.set_start_method("spawn")
     device = utils.Parameters.device
-    run_defence_experiment(dataset_class=ds.Caltech101, output_shape=(101,), attack_params={"epsilon": 0.01})
+    run_defence_experiment(dataset_class=ds.Caltech101, output_shape=(101,), attack_params={"eps": 0.01})

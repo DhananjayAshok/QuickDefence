@@ -7,7 +7,7 @@ import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from attacks import ATTACKS, FoolboxImageAttack
+from attacks import ATTACKS, ImageAttack
 from augmentations import get_augmentation
 from datasets import (
     DATASETS,
@@ -50,7 +50,7 @@ def get_defence_results(
 
     # Get attack
     attack_class = ATTACKS[attack_name]
-    attack = FoolboxImageAttack(foolbox_attack_class=attack_class, params=attack_params)
+    attack = ImageAttack(attack_class=attack_class, params=attack_params)
 
     # Get model and defence's augmentation
     model = get_model(dataset_class)

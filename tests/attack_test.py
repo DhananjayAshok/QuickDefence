@@ -3,7 +3,7 @@ import torch
 from foolbox.attacks import LinfPGD
 
 import utils
-from attacks import FoolboxImageAttack
+from attacks import ImageAttack
 from datasets import (
     BatchNormalize,
     InverseNormalize,
@@ -26,7 +26,7 @@ def test_attack_visual(
     dataset_class = get_dataset_class(dataset_name)
     model = get_model(dataset_class).to(utils.Parameters.device)
     model.eval()
-    attack = FoolboxImageAttack(foolbox_attack_class=attack_class, params=attack_params)
+    attack = ImageAttack(attack_class=attack_class, params=attack_params)
 
     # Get samples to apply attack
     normalize_transform = get_normalization_transform(dataset_class)
@@ -69,7 +69,7 @@ def test_attack_maginitude(dataset_name, attack_name, attack_params):
     attack_class = utils.get_attack_class(attack_name)
     model = get_model(dataset_class).to(utils.Parameters.device)
     model.eval()
-    attack = FoolboxImageAttack(foolbox_attack_class=attack_class, params=attack_params)
+    attack = ImageAttack(attack_class=attack_class, params=attack_params)
 
     # Get samples to apply attack
     normalize_transform = get_normalization_transform(dataset_class)
@@ -92,7 +92,7 @@ def test_attack_maginitude(dataset_name, attack_name, attack_params):
 
 if __name__ == "__main__":
     test_attack_maginitude(
-        "caltech101", attack_name="linf", attack_params={"epsilon": 1e-2}
+        "caltech101", attack_name="pgd", attack_params={"eps": 1e-2}
     )
     # test_attack_visual(
     #     dataset_name="caltech101",

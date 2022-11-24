@@ -222,7 +222,6 @@ def get_dataset_class(dataset_name="mnist"):
 def get_attack_class(attack_name="linf"):
     if attack_name == "linf":
         from foolbox.attacks import LinfPGD
-
         return LinfPGD
     else:
         raise ValueError(f"Attack {attack_name} is not supported")

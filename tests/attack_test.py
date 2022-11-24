@@ -87,6 +87,7 @@ def test_attack_maginitude(dataset_name, attack_name, attack_params):
     print(f"Image dimension: {image_X.shape}")
     print(f"Max perturbation: {torch.max(diff)}")
     print(f"Perturbation L1 norm: {torch.sum(diff)}")
+    print(f"Mean: {torch.mean(diff)}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,15 @@
+{
+  "Undefended Clean Accuracy": 0.0,
+  "Undefended Advsarial Accuracy": 0.03125,
+  "Undefended Advsarial Robustness": 0.40625,
+  "Undefended Advsarial Conditional Robustness": NaN,
+  "Defended Clean Accuracy": 0.0,
+  "Defended Advsarial Accuracy": 0.046875,
+  "Defended Advsarial Robustness": 0.53125,
+  "Defended Advsarial Conditional Robustness": NaN,
+  "dataset": "cifar10",
+  "attack": "linf",
+  "epsilon": 0.01,
+  "batch_size": 32,
+  "defence_sample_rate": 10
+}

@@ -16,7 +16,7 @@ from models import get_model
 def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_samples=32,
                            attack_class=LinfPGD, attack_params=None,
                            aug=None, sample_rate=10,
-                           show=True):
+                           show=True, density=False):
     transform = get_torchvision_dataset(dataset_class, train=False).transform.transforms[2]
     index_to_class = get_index_to_class(dataset_class=dataset_class)
     model = get_model(dataset_class)
@@ -78,25 +78,26 @@ def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_sample
     utils.show_adversary_vs_original_with_preds(adv_img, img_X=image_X, y=y, adv_pred=adv_pred, pred=pred,
                                                 defended_pred=defended_adv_pred, index_to_class=index_to_class,
                                                 n_show=5)
-    advs = advs[success]
-    y = y[success]
-
-    density = image_defence_density(
-        model, advs, y, defence=aug, n_samples=1000, n_workers=1
-    )
-    robust_density = image_defence_density(
-            model, advs, y, defence=aug, n_samples=1000, n_workers=1, robustness=True
+    if density:
+        s_advs = advs[success]
+        s_y = y[success]
+        density = image_defence_density(
+            model, s_advs, s_y, defence=aug, n_samples=1000, n_workers=1
         )
+        robust_density = image_defence_density(
+                model, s_advs, s_y, defence=aug, n_samples=1000, n_workers=1, robustness=True
+            )
 
-    de_adversarial_density = image_defence_density(
-            model, advs, y, defence=aug, n_samples=1000, n_workers=1, de_adversarialize=True
-        )
+        de_adversarial_density = image_defence_density(
+                model, s_advs, s_y, defence=aug, n_samples=1000, n_workers=1, de_adversarialize=True
+            )
 
-    print(f"Density: Avg {density.mean()}, Std: {density.std()}, Max: {density.max()}, Min: {density.min()}")
-    print(f"Robust Density: Avg {robust_density.mean()}, Std: {robust_density.std()}, "
-          f"Max: {robust_density.max()}, Min: {robust_density.min()}")
-    print(f"De-Adversarial Density: Avg {de_adversarial_density.mean()}, Std: {de_adversarial_density.std()}, "
-          f"Max: {de_adversarial_density.max()}, Min: {de_adversarial_density.min()}")
+        print(f"Density: Avg {density.mean()}, Std: {density.std()}, Max: {density.max()}, Min: {density.min()}")
+        print(f"Robust Density: Avg {robust_density.mean()}, Std: {robust_density.std()}, "
+              f"Max: {robust_density.max()}, Min: {robust_density.min()}")
+        print(f"De-Adversarial Density: Avg {de_adversarial_density.mean()}, Std: {de_adversarial_density.std()}, "
+              f"Max: {de_adversarial_density.max()}, Min: {de_adversarial_density.min()}")
+    return model, X, y, advs, success, success_2, batch_transform, inverse_transform
 
 
 

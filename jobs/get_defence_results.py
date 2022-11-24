@@ -102,7 +102,7 @@ def get_defence_results(
 
         def_adv_pred = defended_model(adv_X).argmax(-1)
         all_def_adv_pred = torch.cat((all_def_adv_pred, def_adv_pred))
-        break
+
     metrics = {
         "Undefended Clean Accuracy": get_accuracy(all_y, all_undef_pred).item(),
         "Undefended Advsarial Accuracy": get_accuracy(all_y, all_undef_adv_pred).item(),

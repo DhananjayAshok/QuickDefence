@@ -19,10 +19,16 @@ from models import get_model
 from utils import normalize_to_dict
 
 
-def get_result_filepath():
+def get_result_filepath(attack_name, dataset_name):
     from init_path import parent_path
 
-    folder = Path(parent_path) / "results" / "epsilon_ball_results"
+    folder = (
+        Path(parent_path)
+        / "results"
+        / "epsilon_ball_results"
+        / attack_name
+        / dataset_name
+    )
     folder.mkdir(parents=True, exist_ok=True)
 
     def get_filename(idx):
@@ -65,7 +71,7 @@ def draw_episilon_ball(
     transform = get_normalization_transform(DATASETS[dataset_name])
     preprocessing = normalize_to_dict(transform)
 
-    # Draw an image sample until adv is sucessful
+    # Draw an image sample until original pred is correct and  adv is sucessful
     for i in range(max_num_attacks):
         X, y = get_torchvision_dataset_sample(
             DATASETS[dataset_name], train=False, batch_size=1
@@ -78,8 +84,10 @@ def draw_episilon_ball(
         adv_X = batch_transform(adv_X)
         adv_pred = model(adv_X).argmax(-1).item()
 
-        if org_pred != adv_pred:
+        if org_pred == y.item() and org_pred != adv_pred:
+            y = y.item()
             break
+    logging.info(f"True label: {y}")
     logging.info(f"Original prediction: {org_pred}")
     logging.info(f"Adversarial prediction: {adv_pred}")
 
@@ -94,9 +102,6 @@ def draw_episilon_ball(
     # Collect predictions statistics
     percent_recovered = np.mean(predictions == org_pred)
     percent_adv = np.mean(predictions == adv_pred)
-    percent_other = np.mean(
-        np.logical_and(predictions != org_pred, predictions != adv_pred)
-    )
 
     logging.info(
         f"Percentage of augmented attack no longer adversarial: {percent_recovered}"
@@ -105,7 +110,7 @@ def draw_episilon_ball(
         f"Percentage of augmented attack that remains adversarial: {percent_adv}"
     )
     logging.info(
-        f"Percentage of augmented attack that remains incorrect: {percent_other}"
+        f"Percentage of augmented attack that remains incorrect: {1 - percent_adv - percent_recovered}"
     )
 
 
@@ -114,7 +119,7 @@ if __name__ == "__main__":
     attack_params = {"eps": args.attack_epsilon}
 
     if args.save:
-        result_filepath = get_result_filepath()
+        result_filepath = get_result_filepath(args.attack, args.dataset)
         print(f"Writing results to {result_filepath}")
         logging.basicConfig(
             filename=result_filepath, format="%(asctime)s %(message)s", level=logging.INFO

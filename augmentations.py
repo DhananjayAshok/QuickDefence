@@ -44,6 +44,32 @@ class MNISTAugmentation:
     standard_aug = DataAugmentation([noise, affine])
 
 
+class ExactLinfNoise:
+    def __init__(self, eps, temp=1):
+        self.eps = eps
+        self.temp = temp
+
+    def __call__(self, x):
+        val = self.eps * self.temp
+        n = (torch.rand(x.size())/(2*val)) - val
+        return x+n
+
+
+class ExactL2Noise:
+    def __init__(self, eps, temp=1):
+        self.eps = eps
+        self.temp = temp
+
+    def __call__(self, x):
+        val = self.eps * self.temp
+        n = torch.rand(x.size()) - 0.5
+        n_norm = n.view(x.shape[0], -1).norm(dim=1).max()
+        n = n / n_norm
+        n = n * val
+        return x+n
+
+
+
 def get_augmentation(dset_class):
     if dset_class == ds.CIFAR10:
         return CIFARAugmentation.standard_aug

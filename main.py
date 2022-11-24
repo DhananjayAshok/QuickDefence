@@ -1,7 +1,9 @@
 import torch.multiprocessing as mp
 import torchvision.transforms as transforms
 from torchvision.datasets import CIFAR10
-from torchattacks import PGD
+from torchattacks import PGD, PGDL2
+
+import augmentations
 import utils
 from adversarial_density import image_defence_density
 from attacks import ImageAttack
@@ -14,7 +16,7 @@ import torchvision.datasets as ds
 
 
 def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_samples=32,
-                           attack_class=PGD, attack_params=None,
+                           attack_class=PGDL2, attack_params=None,
                            aug=None, sample_rate=10,
                            show=True, density=False):
     transform = get_torchvision_dataset(dataset_class, train=False).transform.transforms[2]
@@ -22,7 +24,7 @@ def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_sample
     model = get_model(dataset_class)
 
     X, y = get_torchvision_dataset_sample(dataset_class, batch_size=no_samples)
-    pred = model(X)
+    pred = model(X).argmax(-1)
 
     batch_transform = BatchNormalize(normalize_transform=transform)
     inverse_transform = InverseNormalize(normalize_transform=transform)
@@ -46,7 +48,7 @@ def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_sample
     )
     defended_pred = defended.predict(X)
     print(
-        f"Clean Accuracy {utils.get_accuracy_logits(y, pred)} vs Defended Accuracy "
+        f"Clean Accuracy {utils.get_accuracy(y, pred)} vs Defended Accuracy "
         f"{utils.get_accuracy(y, defended_pred)}"
     )
 
@@ -54,7 +56,7 @@ def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_sample
     advs = attack(
         model=model, input_batch=X, true_labels=y, preprocessing=preprocessing
     )
-    adv_img = advs
+    adv_img = inverse_transform(advs)
     adv_pred = model(advs).argmin(-1)
     defended_adv_pred = defended(advs).argmin(-1)
     (
@@ -80,27 +82,29 @@ def run_defence_experiment(dataset_class=CIFAR10, output_shape=(10, ), no_sample
     if density:
         s_advs = advs[success]
         s_y = y[success]
-        density = image_defence_density(
-            model, s_advs, s_y, defence=aug, n_samples=1000, n_workers=1
-        )
-        robust_density = image_defence_density(
-                model, s_advs, s_y, defence=aug, n_samples=1000, n_workers=1, robustness=True
+        if sum(success) > 0:
+            density = image_defence_density(
+                model, s_advs, s_y, defence=aug, n_samples=100, n_workers=1
             )
+            robust_density = image_defence_density(
+                    model, s_advs, s_y, defence=aug, n_samples=100, n_workers=1, robustness=True
+                )
 
-        de_adversarial_density = image_defence_density(
-                model, s_advs, s_y, defence=aug, n_samples=1000, n_workers=1, de_adversarialize=True
-            )
+            de_adversarial_density = image_defence_density(
+                    model, s_advs, s_y, defence=aug, n_samples=100, n_workers=1, de_adversarialize=True
+                )
 
-        print(f"Density: Avg {density.mean()}, Std: {density.std()}, Max: {density.max()}, Min: {density.min()}")
-        print(f"Robust Density: Avg {robust_density.mean()}, Std: {robust_density.std()}, "
-              f"Max: {robust_density.max()}, Min: {robust_density.min()}")
-        print(f"De-Adversarial Density: Avg {de_adversarial_density.mean()}, Std: {de_adversarial_density.std()}, "
-              f"Max: {de_adversarial_density.max()}, Min: {de_adversarial_density.min()}")
+            print(f"Density: Avg {density.mean()}, Std: {density.std()}, Max: {density.max()}, Min: {density.min()}")
+            print(f"Robust Density: Avg {robust_density.mean()}, Std: {robust_density.std()}, "
+                  f"Max: {robust_density.max()}, Min: {robust_density.min()}")
+            print(f"De-Adversarial Density: Avg {de_adversarial_density.mean()}, Std: {de_adversarial_density.std()}, "
+                  f"Max: {de_adversarial_density.max()}, Min: {de_adversarial_density.min()}")
     return model, X, y, advs, success, success_2, batch_transform, inverse_transform
-
 
 
 if __name__ == "__main__":
     mp.set_start_method("spawn")
     device = utils.Parameters.device
-    run_defence_experiment(dataset_class=ds.Caltech101, output_shape=(101,), attack_params={"eps": 0.01})
+    eps = 1
+    augmentation = augmentations.ExactL2Noise(eps=eps)
+    run_defence_experiment(dataset_class=ds.Caltech101, output_shape=(101,), attack_params={"eps": eps}, aug=augmentation, density=True)

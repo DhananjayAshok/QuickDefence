@@ -82,17 +82,13 @@ def test_attack_maginitude(dataset_name, attack_name, attack_params):
     adv_x = attack(model, input_batch=X, true_labels=y, preprocessing=preprocessing)
     # batch_transform = BatchNormalize(normalize_transform=normalize_transform)
     # adv_x = batch_transform(adv_x)
-
-    diff = torch.abs(image_X - adv_x)
-    print(f"Image dimension: {image_X.shape}")
-    print(f"Max perturbation: {torch.max(diff)}")
-    print(f"Perturbation L1 norm: {torch.sum(diff)}")
-    print(f"Mean: {torch.mean(diff)}")
+    adv_x = inverse_transform(adv_x)
+    utils.measure_attack_stats(image_X, adv_x, disp=True)
 
 
 if __name__ == "__main__":
     test_attack_maginitude(
-        "caltech101", attack_name="pgd", attack_params={"eps": 1e-2}
+        "caltech101", attack_name="pgd_l2", attack_params={"eps": 1e-2}
     )
     # test_attack_visual(
     #     dataset_name="caltech101",

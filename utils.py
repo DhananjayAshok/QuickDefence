@@ -224,12 +224,22 @@ def get_attack_class(attack_name="pgd"):
         from torchattacks import PGD
 
         return PGD
-    if attack_name == "pdg_l2":
+    if attack_name == "pgd_l2":
         from torchattacks import PGDL2
 
         return PGDL2
     else:
         raise ValueError(f"Attack {attack_name} is not supported")
+
+
+def measure_attack_stats(X, advs, disp=False):
+    diff = (X - advs).view(X.shape[0], -1)
+    l1_norm = diff.abs().sum(dim=1).mean()
+    l2_norm = diff.norm(dim=1).mean()
+    linf_norm = diff.abs().max(dim=1)[0].mean()
+    if disp:
+        print(f"L1 Norm: {l1_norm}, L2 Norm: {l2_norm}, LInf Norm: {linf_norm}")
+    return l1_norm, l2_norm, linf_norm
 
 
 class Parameters:

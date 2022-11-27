@@ -1,0 +1,406 @@
+Dataset,Epsilon,Augmentation,Metric,SampleAgg,BatchAgg,val
+CalTech101,1,L2 Noise eps:1,Correct,Mean,Mean,0.0
+CalTech101,1,L2 Noise eps:1,Correct,Mean,Max,0.0
+CalTech101,1,L2 Noise eps:1,Correct,Mean,Min,0.0
+CalTech101,1,L2 Noise eps:1,Correct,Max,Mean,0.0
+CalTech101,1,L2 Noise eps:1,Correct,Max,Max,0.0
+CalTech101,1,L2 Noise eps:1,Correct,Max,Min,0.0
+CalTech101,1,L2 Noise eps:1,Correct,Min,Mean,0.0
+CalTech101,1,L2 Noise eps:1,Correct,Min,Max,0.0
+CalTech101,1,L2 Noise eps:1,Correct,Min,Min,0.0
+CalTech101,1,L2 Noise eps:1,Robust,Mean,Mean,0.0
+CalTech101,1,L2 Noise eps:1,Robust,Mean,Max,0.0
+CalTech101,1,L2 Noise eps:1,Robust,Mean,Min,0.0
+CalTech101,1,L2 Noise eps:1,Robust,Max,Mean,0.0
+CalTech101,1,L2 Noise eps:1,Robust,Max,Max,0.0
+CalTech101,1,L2 Noise eps:1,Robust,Max,Min,0.0
+CalTech101,1,L2 Noise eps:1,Robust,Min,Mean,0.0
+CalTech101,1,L2 Noise eps:1,Robust,Min,Max,0.0
+CalTech101,1,L2 Noise eps:1,Robust,Min,Min,0.0
+CalTech101,1,L2 Noise eps:1,De-adversarial,Mean,Mean,0.0
+CalTech101,1,L2 Noise eps:1,De-adversarial,Mean,Max,0.0
+CalTech101,1,L2 Noise eps:1,De-adversarial,Mean,Min,0.0
+CalTech101,1,L2 Noise eps:1,De-adversarial,Max,Mean,0.0
+CalTech101,1,L2 Noise eps:1,De-adversarial,Max,Max,0.0
+CalTech101,1,L2 Noise eps:1,De-adversarial,Max,Min,0.0
+CalTech101,1,L2 Noise eps:1,De-adversarial,Min,Mean,0.0
+CalTech101,1,L2 Noise eps:1,De-adversarial,Min,Max,0.0
+CalTech101,1,L2 Noise eps:1,De-adversarial,Min,Min,0.0
+CIFAR10,1,L2 Noise eps:1,Correct,Mean,Mean,0.0
+CIFAR10,1,L2 Noise eps:1,Correct,Mean,Max,0.0
+CIFAR10,1,L2 Noise eps:1,Correct,Mean,Min,0.0
+CIFAR10,1,L2 Noise eps:1,Correct,Max,Mean,0.0
+CIFAR10,1,L2 Noise eps:1,Correct,Max,Max,0.0
+CIFAR10,1,L2 Noise eps:1,Correct,Max,Min,0.0
+CIFAR10,1,L2 Noise eps:1,Correct,Min,Mean,0.0
+CIFAR10,1,L2 Noise eps:1,Correct,Min,Max,0.0
+CIFAR10,1,L2 Noise eps:1,Correct,Min,Min,0.0
+CIFAR10,1,L2 Noise eps:1,Robust,Mean,Mean,0.0
+CIFAR10,1,L2 Noise eps:1,Robust,Mean,Max,0.0
+CIFAR10,1,L2 Noise eps:1,Robust,Mean,Min,0.0
+CIFAR10,1,L2 Noise eps:1,Robust,Max,Mean,0.0
+CIFAR10,1,L2 Noise eps:1,Robust,Max,Max,0.0
+CIFAR10,1,L2 Noise eps:1,Robust,Max,Min,0.0
+CIFAR10,1,L2 Noise eps:1,Robust,Min,Mean,0.0
+CIFAR10,1,L2 Noise eps:1,Robust,Min,Max,0.0
+CIFAR10,1,L2 Noise eps:1,Robust,Min,Min,0.0
+CIFAR10,1,L2 Noise eps:1,De-adversarial,Mean,Mean,0.0
+CIFAR10,1,L2 Noise eps:1,De-adversarial,Mean,Max,0.0
+CIFAR10,1,L2 Noise eps:1,De-adversarial,Mean,Min,0.0
+CIFAR10,1,L2 Noise eps:1,De-adversarial,Max,Mean,0.0
+CIFAR10,1,L2 Noise eps:1,De-adversarial,Max,Max,0.0
+CIFAR10,1,L2 Noise eps:1,De-adversarial,Max,Min,0.0
+CIFAR10,1,L2 Noise eps:1,De-adversarial,Min,Mean,0.0
+CIFAR10,1,L2 Noise eps:1,De-adversarial,Min,Max,0.0
+CIFAR10,1,L2 Noise eps:1,De-adversarial,Min,Min,0.0
+CIFAR10,2,L2 Noise eps:2,Correct,Mean,Mean,0.0
+CIFAR10,2,L2 Noise eps:2,Correct,Mean,Max,0.0
+CIFAR10,2,L2 Noise eps:2,Correct,Mean,Min,0.0
+CIFAR10,2,L2 Noise eps:2,Correct,Max,Mean,0.0
+CIFAR10,2,L2 Noise eps:2,Correct,Max,Max,0.0
+CIFAR10,2,L2 Noise eps:2,Correct,Max,Min,0.0
+CIFAR10,2,L2 Noise eps:2,Correct,Min,Mean,0.0
+CIFAR10,2,L2 Noise eps:2,Correct,Min,Max,0.0
+CIFAR10,2,L2 Noise eps:2,Correct,Min,Min,0.0
+CIFAR10,2,L2 Noise eps:2,Robust,Mean,Mean,0.0
+CIFAR10,2,L2 Noise eps:2,Robust,Mean,Max,0.0
+CIFAR10,2,L2 Noise eps:2,Robust,Mean,Min,0.0
+CIFAR10,2,L2 Noise eps:2,Robust,Max,Mean,0.0
+CIFAR10,2,L2 Noise eps:2,Robust,Max,Max,0.0
+CIFAR10,2,L2 Noise eps:2,Robust,Max,Min,0.0
+CIFAR10,2,L2 Noise eps:2,Robust,Min,Mean,0.0
+CIFAR10,2,L2 Noise eps:2,Robust,Min,Max,0.0
+CIFAR10,2,L2 Noise eps:2,Robust,Min,Min,0.0
+CIFAR10,2,L2 Noise eps:2,De-adversarial,Mean,Mean,0.0
+CIFAR10,2,L2 Noise eps:2,De-adversarial,Mean,Max,0.0
+CIFAR10,2,L2 Noise eps:2,De-adversarial,Mean,Min,0.0
+CIFAR10,2,L2 Noise eps:2,De-adversarial,Max,Mean,0.0
+CIFAR10,2,L2 Noise eps:2,De-adversarial,Max,Max,0.0
+CIFAR10,2,L2 Noise eps:2,De-adversarial,Max,Min,0.0
+CIFAR10,2,L2 Noise eps:2,De-adversarial,Min,Mean,0.0
+CIFAR10,2,L2 Noise eps:2,De-adversarial,Min,Max,0.0
+CIFAR10,2,L2 Noise eps:2,De-adversarial,Min,Min,0.0
+CIFAR10,5,L2 Noise eps:5,Correct,Mean,Mean,0.0
+CIFAR10,5,L2 Noise eps:5,Correct,Mean,Max,0.0
+CIFAR10,5,L2 Noise eps:5,Correct,Mean,Min,0.0
+CIFAR10,5,L2 Noise eps:5,Correct,Max,Mean,0.0
+CIFAR10,5,L2 Noise eps:5,Correct,Max,Max,0.0
+CIFAR10,5,L2 Noise eps:5,Correct,Max,Min,0.0
+CIFAR10,5,L2 Noise eps:5,Correct,Min,Mean,0.0
+CIFAR10,5,L2 Noise eps:5,Correct,Min,Max,0.0
+CIFAR10,5,L2 Noise eps:5,Correct,Min,Min,0.0
+CIFAR10,5,L2 Noise eps:5,Robust,Mean,Mean,0.0
+CIFAR10,5,L2 Noise eps:5,Robust,Mean,Max,0.0
+CIFAR10,5,L2 Noise eps:5,Robust,Mean,Min,0.0
+CIFAR10,5,L2 Noise eps:5,Robust,Max,Mean,0.0
+CIFAR10,5,L2 Noise eps:5,Robust,Max,Max,0.0
+CIFAR10,5,L2 Noise eps:5,Robust,Max,Min,0.0
+CIFAR10,5,L2 Noise eps:5,Robust,Min,Mean,0.0
+CIFAR10,5,L2 Noise eps:5,Robust,Min,Max,0.0
+CIFAR10,5,L2 Noise eps:5,Robust,Min,Min,0.0
+CIFAR10,5,L2 Noise eps:5,De-adversarial,Mean,Mean,0.0
+CIFAR10,5,L2 Noise eps:5,De-adversarial,Mean,Max,0.0
+CIFAR10,5,L2 Noise eps:5,De-adversarial,Mean,Min,0.0
+CIFAR10,5,L2 Noise eps:5,De-adversarial,Max,Mean,0.0
+CIFAR10,5,L2 Noise eps:5,De-adversarial,Max,Max,0.0
+CIFAR10,5,L2 Noise eps:5,De-adversarial,Max,Min,0.0
+CIFAR10,5,L2 Noise eps:5,De-adversarial,Min,Mean,0.0
+CIFAR10,5,L2 Noise eps:5,De-adversarial,Min,Max,0.0
+CIFAR10,5,L2 Noise eps:5,De-adversarial,Min,Min,0.0
+CalTech101,2,L2 Noise eps:2,Correct,Mean,Mean,0.04347
+CalTech101,2,L2 Noise eps:2,Correct,Mean,Max,0.04347
+CalTech101,2,L2 Noise eps:2,Correct,Mean,Min,0.04347
+CalTech101,2,L2 Noise eps:2,Robust,Mean,Mean,0.04347
+CalTech101,2,L2 Noise eps:2,Robust,Mean,Max,0.04347
+CalTech101,2,L2 Noise eps:2,Robust,Mean,Min,0.04347
+CalTech101,2,L2 Noise eps:2,De-adversarial,Mean,Mean,0.04347
+CalTech101,2,L2 Noise eps:2,De-adversarial,Mean,Max,0.04347
+CalTech101,2,L2 Noise eps:2,De-adversarial,Mean,Min,0.04347
+CalTech101,2,L2 Noise eps:2,Correct,Max,Mean,1.0
+CalTech101,2,L2 Noise eps:2,Correct,Max,Max,1.0
+CalTech101,2,L2 Noise eps:2,Correct,Max,Min,1.0
+CalTech101,2,L2 Noise eps:2,Robust,Max,Mean,1.0
+CalTech101,2,L2 Noise eps:2,Robust,Max,Max,1.0
+CalTech101,2,L2 Noise eps:2,Robust,Max,Min,1.0
+CalTech101,2,L2 Noise eps:2,De-adversarial,Max,Mean,1.0
+CalTech101,2,L2 Noise eps:2,De-adversarial,Max,Max,1.0
+CalTech101,2,L2 Noise eps:2,De-adversarial,Max,Min,1.0
+CalTech101,2,L2 Noise eps:2,Correct,Min,Mean,0.0
+CalTech101,2,L2 Noise eps:2,Correct,Min,Max,0.0
+CalTech101,2,L2 Noise eps:2,Correct,Min,Min,0.0
+CalTech101,2,L2 Noise eps:2,Robust,Min,Mean,0.0
+CalTech101,2,L2 Noise eps:2,Robust,Min,Max,0.0
+CalTech101,2,L2 Noise eps:2,Robust,Min,Min,0.0
+CalTech101,2,L2 Noise eps:2,De-adversarial,Min,Mean,0.0
+CalTech101,2,L2 Noise eps:2,De-adversarial,Min,Max,0.0
+CalTech101,2,L2 Noise eps:2,De-adversarial,Min,Min,0.0
+CalTech101,5,L2 Noise eps:5,Correct,Mean,Mean,0.0
+CalTech101,5,L2 Noise eps:5,Correct,Mean,Max,0.0
+CalTech101,5,L2 Noise eps:5,Correct,Mean,Min,0.0
+CalTech101,5,L2 Noise eps:5,Correct,Max,Mean,0.0
+CalTech101,5,L2 Noise eps:5,Correct,Max,Max,0.0
+CalTech101,5,L2 Noise eps:5,Correct,Max,Min,0.0
+CalTech101,5,L2 Noise eps:5,Correct,Min,Mean,0.0
+CalTech101,5,L2 Noise eps:5,Correct,Min,Max,0.0
+CalTech101,5,L2 Noise eps:5,Correct,Min,Min,0.0
+CalTech101,5,L2 Noise eps:5,De-adversarial,Mean,Mean,0.0
+CalTech101,5,L2 Noise eps:5,De-adversarial,Mean,Max,0.0
+CalTech101,5,L2 Noise eps:5,De-adversarial,Mean,Min,0.0
+CalTech101,5,L2 Noise eps:5,De-adversarial,Max,Mean,0.0
+CalTech101,5,L2 Noise eps:5,De-adversarial,Max,Max,0.0
+CalTech101,5,L2 Noise eps:5,De-adversarial,Max,Min,0.0
+CalTech101,5,L2 Noise eps:5,De-adversarial,Min,Mean,0.0
+CalTech101,5,L2 Noise eps:5,De-adversarial,Min,Max,0.0
+CalTech101,5,L2 Noise eps:5,De-adversarial,Min,Min,0.0
+CalTech101,5,L2 Noise eps:5,Robust,Min,Mean,0.0
+CalTech101,5,L2 Noise eps:5,Robust,Min,Max,0.0
+CalTech101,5,L2 Noise eps:5,Robust,Min,Min,0.0
+CalTech101,5,L2 Noise eps:5,Robust,Mean,Mean,0.00582
+CalTech101,5,L2 Noise eps:5,Robust,Mean,Max,0.03448
+CalTech101,5,L2 Noise eps:5,Robust,Mean,Min,0.0
+CalTech101,5,L2 Noise eps:5,Robust,Max,Mean,0.17
+CalTech101,5,L2 Noise eps:5,Robust,Max,Max,1.0
+CalTech101,5,L2 Noise eps:5,Robust,Max,Min,0.0
+CalTech101,2,Rotate,Correct,Mean,Mean,0.3176
+CalTech101,2,Rotate,Correct,Mean,Max,0.8846
+CalTech101,2,Rotate,Correct,Mean,Min,0.0
+CalTech101,2,Rotate,Correct,Max,Mean,0.76
+CalTech101,2,Rotate,Correct,Max,Mean,1.0
+CalTech101,2,Rotate,Correct,Max,Mean,0.0
+CalTech101,2,Rotate,Correct,Min,Mean,0.0
+CalTech101,2,Rotate,Correct,Min,Mean,0.0
+CalTech101,2,Rotate,Correct,Min,Mean,0.0
+CalTech101,2,Rotate,Robust,Mean,Mean,0.616
+CalTech101,2,Rotate,Robust,Mean,Max,1.0
+CalTech101,2,Rotate,Robust,Mean,Min,0.0
+CalTech101,2,Rotate,Robust,Max,Mean,0.99
+CalTech101,2,Rotate,Robust,Max,Mean,1.0
+CalTech101,2,Rotate,Robust,Max,Mean,0.0
+CalTech101,2,Rotate,Robust,Min,Mean,0.1
+CalTech101,2,Rotate,Robust,Min,Mean,1.0
+CalTech101,2,Rotate,Robust,Min,Mean,0.0
+CalTech101,2,Rotate,De-adversarial,Mean,Mean,0.32
+CalTech101,2,Rotate,De-adversarial,Mean,Max,0.88
+CalTech101,2,Rotate,De-adversarial,Mean,Min,0.0
+CalTech101,2,Rotate,De-adversarial,Max,Mean,0.83
+CalTech101,2,Rotate,De-adversarial,Max,Mean,1.0
+CalTech101,2,Rotate,De-adversarial,Max,Mean,0.0
+CalTech101,2,Rotate,De-adversarial,Min,Mean,0.0
+CalTech101,2,Rotate,De-adversarial,Min,Mean,0.0
+CalTech101,2,Rotate,De-adversarial,Min,Mean,0.0
+CalTech101,2,Translate,Correct,Mean,Mean,0.4257
+CalTech101,2,Translate,Correct,Mean,Max,0.8076
+CalTech101,2,Translate,Correct,Mean,Min,0.0384
+CalTech101,2,Translate,Correct,Max,Mean,1.0
+CalTech101,2,Translate,Correct,Max,Mean,1.0
+CalTech101,2,Translate,Correct,Max,Mean,1.0
+CalTech101,2,Translate,Correct,Min,Mean,0.0
+CalTech101,2,Translate,Correct,Min,Mean,0.0
+CalTech101,2,Translate,Correct,Min,Mean,0.0
+CalTech101,2,Translate,Robust,Mean,Mean,0.6657
+CalTech101,2,Translate,Robust,Mean,Max,1.0
+CalTech101,2,Translate,Robust,Mean,Min,0.0769
+CalTech101,2,Translate,Robust,Max,Mean,1.0
+CalTech101,2,Translate,Robust,Max,Mean,1.0
+CalTech101,2,Translate,Robust,Max,Mean,1.0
+CalTech101,2,Translate,Robust,Min,Mean,0.27
+CalTech101,2,Translate,Robust,Min,Mean,1.0
+CalTech101,2,Translate,Robust,Min,Mean,0.0
+CalTech101,2,Translate,De-adversarial,Mean,Mean,0.4265
+CalTech101,2,Translate,De-adversarial,Mean,Max,0.8076
+CalTech101,2,Translate,De-adversarial,Mean,Min,0.0
+CalTech101,2,Translate,De-adversarial,Max,Mean,0.98
+CalTech101,2,Translate,De-adversarial,Max,Mean,1.0
+CalTech101,2,Translate,De-adversarial,Max,Mean,0.0
+CalTech101,2,Translate,De-adversarial,Min,Mean,0.0
+CalTech101,2,Translate,De-adversarial,Min,Mean,0.0
+CalTech101,2,Translate,De-adversarial,Min,Mean,0.0
+MNIST,1,L2 Noise eps:1,Correct,Mean,Mean,0.042
+MNIST,1,L2 Noise eps:1,Correct,Mean,Max,0.166
+MNIST,1,L2 Noise eps:1,Correct,Mean,Min,0.0
+MNIST,1,L2 Noise eps:1,Correct,Max,Mean,0.36
+MNIST,1,L2 Noise eps:1,Correct,Max,Mean,1.0
+MNIST,1,L2 Noise eps:1,Correct,Max,Mean,0.0
+MNIST,1,L2 Noise eps:1,Correct,Min,Mean,0.0
+MNIST,1,L2 Noise eps:1,Correct,Min,Mean,0.0
+MNIST,1,L2 Noise eps:1,Correct,Min,Mean,0.0
+MNIST,1,L2 Noise eps:1,Robust,Mean,Mean,0.033
+MNIST,1,L2 Noise eps:1,Robust,Mean,Max,0.166
+MNIST,1,L2 Noise eps:1,Robust,Mean,Min,0.0
+MNIST,1,L2 Noise eps:1,Robust,Max,Mean,0.33
+MNIST,1,L2 Noise eps:1,Robust,Max,Mean,1.0
+MNIST,1,L2 Noise eps:1,Robust,Max,Mean,0.0
+MNIST,1,L2 Noise eps:1,Robust,Min,Mean,0.0
+MNIST,1,L2 Noise eps:1,Robust,Min,Mean,0.0
+MNIST,1,L2 Noise eps:1,Robust,Min,Mean,0.0
+MNIST,1,L2 Noise eps:1,De-adversarial,Mean,Mean,0.034
+MNIST,1,L2 Noise eps:1,De-adversarial,Mean,Max,0.16
+MNIST,1,L2 Noise eps:1,De-adversarial,Mean,Min,0.0
+MNIST,1,L2 Noise eps:1,De-adversarial,Max,Mean,0.29
+MNIST,1,L2 Noise eps:1,De-adversarial,Max,Mean,1.0
+MNIST,1,L2 Noise eps:1,De-adversarial,Max,Mean,0.0
+MNIST,1,L2 Noise eps:1,De-adversarial,Min,Mean,0.0
+MNIST,1,L2 Noise eps:1,De-adversarial,Min,Mean,0.0
+MNIST,1,L2 Noise eps:1,De-adversarial,Min,Mean,0.0
+MNIST,2,L2 Noise eps:2,Correct,Mean,Mean,0.1056
+MNIST,2,L2 Noise eps:2,Correct,Mean,Max,0.13
+MNIST,2,L2 Noise eps:2,Correct,Mean,Min,0.0
+MNIST,2,L2 Noise eps:2,Correct,Max,Mean,0.98
+MNIST,2,L2 Noise eps:2,Correct,Max,Mean,1.0
+MNIST,2,L2 Noise eps:2,Correct,Max,Mean,0.0
+MNIST,2,L2 Noise eps:2,Correct,Min,Mean,0.0
+MNIST,2,L2 Noise eps:2,Correct,Min,Mean,0.0
+MNIST,2,L2 Noise eps:2,Correct,Min,Mean,0.0
+MNIST,2,L2 Noise eps:2,Robust,Mean,Mean,0.13782
+MNIST,2,L2 Noise eps:2,Robust,Mean,Max,0.17391
+MNIST,2,L2 Noise eps:2,Robust,Mean,Min,0.0
+MNIST,2,L2 Noise eps:2,Robust,Max,Mean,0.96
+MNIST,2,L2 Noise eps:2,Robust,Max,Mean,1.0
+MNIST,2,L2 Noise eps:2,Robust,Max,Mean,0.0
+MNIST,2,L2 Noise eps:2,Robust,Min,Mean,0.0
+MNIST,2,L2 Noise eps:2,Robust,Min,Mean,0.0
+MNIST,2,L2 Noise eps:2,Robust,Min,Mean,0.0
+MNIST,2,L2 Noise eps:2,De-adversarial,Mean,Mean,0.099
+MNIST,2,L2 Noise eps:2,De-adversarial,Mean,Max,0.13
+MNIST,2,L2 Noise eps:2,De-adversarial,Mean,Min,0.0
+MNIST,2,L2 Noise eps:2,De-adversarial,Max,Mean,0.99
+MNIST,2,L2 Noise eps:2,De-adversarial,Max,Mean,1.0
+MNIST,2,L2 Noise eps:2,De-adversarial,Max,Mean,0.0
+MNIST,2,L2 Noise eps:2,De-adversarial,Min,Mean,0.0
+MNIST,2,L2 Noise eps:2,De-adversarial,Min,Mean,0.0
+MNIST,2,L2 Noise eps:2,De-adversarial,Min,Mean,0.0
+MNIST,5,L2 Noise eps:5,Correct,Mean,Mean,0.02
+MNIST,5,L2 Noise eps:5,Correct,Mean,Max,0.0
+MNIST,5,L2 Noise eps:5,Correct,Mean,Min,11.0
+MNIST,5,L2 Noise eps:5,Correct,Max,Mean,0.0
+MNIST,5,L2 Noise eps:5,Correct,Max,Mean,0.0
+MNIST,5,L2 Noise eps:5,Correct,Max,Mean,4.0
+MNIST,5,L2 Noise eps:5,Correct,Min,Mean,1.0
+MNIST,5,L2 Noise eps:5,Correct,Min,Mean,0.0
+MNIST,5,L2 Noise eps:5,Correct,Min,Mean,0.0
+MNIST,5,L2 Noise eps:5,Robust,Mean,Mean,0.0369
+MNIST,5,L2 Noise eps:5,Robust,Mean,Max,0.115
+MNIST,5,L2 Noise eps:5,Robust,Mean,Min,0.0
+MNIST,5,L2 Noise eps:5,Robust,Max,Mean,0.68
+MNIST,5,L2 Noise eps:5,Robust,Max,Mean,1.0
+MNIST,5,L2 Noise eps:5,Robust,Max,Mean,0.0
+MNIST,5,L2 Noise eps:5,Robust,Min,Mean,0.0
+MNIST,5,L2 Noise eps:5,Robust,Min,Mean,0.0
+MNIST,5,L2 Noise eps:5,Robust,Min,Mean,0.0
+MNIST,5,L2 Noise eps:5,De-adversarial,Mean,Mean,0.017
+MNIST,5,L2 Noise eps:5,De-adversarial,Mean,Max,0.15
+MNIST,5,L2 Noise eps:5,De-adversarial,Mean,Min,0.0
+MNIST,5,L2 Noise eps:5,De-adversarial,Max,Mean,0.37
+MNIST,5,L2 Noise eps:5,De-adversarial,Max,Mean,1.0
+MNIST,5,L2 Noise eps:5,De-adversarial,Max,Mean,0.0
+MNIST,5,L2 Noise eps:5,De-adversarial,Min,Mean,0.0
+MNIST,5,L2 Noise eps:5,De-adversarial,Min,Mean,0.0
+MNIST,5,L2 Noise eps:5,De-adversarial,Min,Mean,0.0
+MNIST,2,Rotate,Correct,Mean,Mean,0.647
+MNIST,2,Rotate,Correct,Mean,Max,0.954
+MNIST,2,Rotate,Correct,Mean,Min,0.0
+MNIST,2,Rotate,Correct,Max,Mean,0.99
+MNIST,2,Rotate,Correct,Max,Mean,1.0
+MNIST,2,Rotate,Correct,Max,Mean,0.0
+MNIST,2,Rotate,Correct,Min,Mean,0.0
+MNIST,2,Rotate,Correct,Min,Mean,0.0
+MNIST,2,Rotate,Correct,Min,Mean,0.0
+MNIST,2,Rotate,Robust,Mean,Mean,0.67
+MNIST,2,Rotate,Robust,Mean,Max,0.954
+MNIST,2,Rotate,Robust,Mean,Min,0.045
+MNIST,2,Rotate,Robust,Max,Mean,1.0
+MNIST,2,Rotate,Robust,Max,Mean,1.0
+MNIST,2,Rotate,Robust,Max,Mean,1.0
+MNIST,2,Rotate,Robust,Min,Mean,0.0
+MNIST,2,Rotate,Robust,Min,Mean,0.0
+MNIST,2,Rotate,Robust,Min,Mean,0.0
+MNIST,2,Rotate,De-adversarial,Mean,Mean,0.659
+MNIST,2,Rotate,De-adversarial,Mean,Max,0.954
+MNIST,2,Rotate,De-adversarial,Mean,Min,0.09
+MNIST,2,Rotate,De-adversarial,Max,Mean,1.0
+MNIST,2,Rotate,De-adversarial,Max,Mean,1.0
+MNIST,2,Rotate,De-adversarial,Max,Mean,1.0
+MNIST,2,Rotate,De-adversarial,Min,Mean,0.0
+MNIST,2,Rotate,De-adversarial,Min,Mean,0.0
+MNIST,2,Rotate,De-adversarial,Min,Mean,0.0
+MNIST,2,Translate,Correct,Mean,Mean,0.19
+MNIST,2,Translate,Correct,Mean,Max,0.93
+MNIST,2,Translate,Correct,Mean,Min,0.0
+MNIST,2,Translate,Correct,Max,Mean,0.35
+MNIST,2,Translate,Correct,Max,Mean,1.0
+MNIST,2,Translate,Correct,Max,Mean,0.0
+MNIST,2,Translate,Correct,Min,Mean,0.0
+MNIST,2,Translate,Correct,Min,Mean,0.0
+MNIST,2,Translate,Correct,Min,Mean,0.0
+MNIST,2,Translate,Robust,Mean,Mean,0.7106
+MNIST,2,Translate,Robust,Mean,Max,1.0
+MNIST,2,Translate,Robust,Mean,Min,0.0625
+MNIST,2,Translate,Robust,Max,Mean,1.0
+MNIST,2,Translate,Robust,Max,Mean,1.0
+MNIST,2,Translate,Robust,Max,Mean,1.0
+MNIST,2,Translate,Robust,Min,Mean,0.3
+MNIST,2,Translate,Robust,Min,Mean,1.0
+MNIST,2,Translate,Robust,Min,Mean,0.0
+MNIST,2,Translate,De-adversarial,Mean,Mean,0.1768
+MNIST,2,Translate,De-adversarial,Mean,Max,0.9375
+MNIST,2,Translate,De-adversarial,Mean,Min,0.0
+MNIST,2,Translate,De-adversarial,Max,Mean,0.34
+MNIST,2,Translate,De-adversarial,Max,Mean,1.0
+MNIST,2,Translate,De-adversarial,Max,Mean,0.0
+MNIST,2,Translate,De-adversarial,Min,Mean,0.0
+MNIST,2,Translate,De-adversarial,Min,Mean,0.0
+MNIST,2,Translate,De-adversarial,Min,Mean,0.0
+CIFAR10,2,Rotate,Correct,Mean,Mean,0.133
+CIFAR10,2,Rotate,Correct,Mean,Max,0.5
+CIFAR10,2,Rotate,Correct,Mean,Min,0.0
+CIFAR10,2,Rotate,Correct,Max,Mean,0.73
+CIFAR10,2,Rotate,Correct,Max,Mean,1.0
+CIFAR10,2,Rotate,Correct,Max,Mean,0.0
+CIFAR10,2,Rotate,Correct,Min,Mean,0.0
+CIFAR10,2,Rotate,Correct,Min,Mean,0.0
+CIFAR10,2,Rotate,Correct,Min,Mean,0.0
+CIFAR10,2,Rotate,Robust,Mean,Mean,0.2463
+CIFAR10,2,Rotate,Robust,Mean,Max,0.766
+CIFAR10,2,Rotate,Robust,Mean,Min,0.0
+CIFAR10,2,Rotate,Robust,Max,Mean,0.79
+CIFAR10,2,Rotate,Robust,Max,Mean,1.0
+CIFAR10,2,Rotate,Robust,Max,Mean,0.0
+CIFAR10,2,Rotate,Robust,Min,Mean,0.0
+CIFAR10,2,Rotate,Robust,Min,Mean,0.0
+CIFAR10,2,Rotate,Robust,Min,Mean,0.0
+CIFAR10,2,Rotate,De-adversarial,Mean,Mean,0.1343
+CIFAR10,2,Rotate,De-adversarial,Mean,Max,0.5
+CIFAR10,2,Rotate,De-adversarial,Mean,Min,0.0
+CIFAR10,2,Rotate,De-adversarial,Max,Mean,0.64
+CIFAR10,2,Rotate,De-adversarial,Max,Mean,1.0
+CIFAR10,2,Rotate,De-adversarial,Max,Mean,0.0
+CIFAR10,2,Rotate,De-adversarial,Min,Mean,0.0
+CIFAR10,2,Rotate,De-adversarial,Min,Mean,0.0
+CIFAR10,2,Rotate,De-adversarial,Min,Mean,0.0
+CIFAR10,2,Translate,Correct,Mean,Mean,0.2243
+CIFAR10,2,Translate,Correct,Mean,Max,0.7826
+CIFAR10,2,Translate,Correct,Mean,Min,0.0
+CIFAR10,2,Translate,Correct,Max,Mean,0.54
+CIFAR10,2,Translate,Correct,Max,Mean,1.0
+CIFAR10,2,Translate,Correct,Max,Mean,0.0
+CIFAR10,2,Translate,Correct,Min,Mean,0.0
+CIFAR10,2,Translate,Correct,Min,Mean,0.0
+CIFAR10,2,Translate,Correct,Min,Mean,0.0
+CIFAR10,2,Translate,Robust,Mean,Mean,0.47652
+CIFAR10,2,Translate,Robust,Mean,Max,1.0
+CIFAR10,2,Translate,Robust,Mean,Min,0.0
+CIFAR10,2,Translate,Robust,Max,Mean,0.7
+CIFAR10,2,Translate,Robust,Max,Mean,1.0
+CIFAR10,2,Translate,Robust,Max,Mean,0.0
+CIFAR10,2,Translate,Robust,Min,Mean,0.02
+CIFAR10,2,Translate,Robust,Min,Mean,1.0
+CIFAR10,2,Translate,Robust,Min,Mean,0.0
+CIFAR10,2,Translate,De-adversarial,Mean,Mean,0.2017
+CIFAR10,2,Translate,De-adversarial,Mean,Max,0.7826
+CIFAR10,2,Translate,De-adversarial,Mean,Min,0.0
+CIFAR10,2,Translate,De-adversarial,Max,Mean,0.5
+CIFAR10,2,Translate,De-adversarial,Max,Mean,1.0
+CIFAR10,2,Translate,De-adversarial,Max,Mean,0.0
+CIFAR10,2,Translate,De-adversarial,Min,Mean,0.0
+CIFAR10,2,Translate,De-adversarial,Min,Mean,0.0
+CIFAR10,2,Translate,De-adversarial,Min,Mean,0.0

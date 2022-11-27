@@ -25,7 +25,7 @@ class CIFARAugmentation:
     noise = kornia.augmentation.RandomGaussianNoise(std=0.05, p=0.6)
     color = kornia.augmentation.ColorJiggle(brightness=(0.9, 1.1), contrast=(1, 2), hue=(-0.25, 0.25), saturation=(0, 5),
                                             p=0.6)
-    affine = kornia.augmentation.RandomAffine(degrees=(-20, 20), translate=(0, 0.2), p=0.6)
+    affine = kornia.augmentation.RandomAffine(degrees=(-1, 1), translate=(0, 0.2), p=1.0)
     standard_aug = DataAugmentation([noise, color, affine])
 
 
@@ -34,13 +34,13 @@ class CaltechAugmentation:
     color = kornia.augmentation.ColorJiggle(brightness=(0.75, 1.1), contrast=(1, 2), hue=(-0.4, 0.4),
                                             saturation=(0, 6),
                                             p=0.3)
-    affine = kornia.augmentation.RandomAffine(degrees=(-45, 45), translate=(0, 0.25), p=0.6)
+    affine = kornia.augmentation.RandomAffine(degrees=(-1, 1), translate=(0, 0.25), p=1.0)
     standard_aug = DataAugmentation([noise, color, affine])
 
 
 class MNISTAugmentation:
     noise = kornia.augmentation.RandomGaussianNoise(std=0.005, p=0.3)
-    affine = kornia.augmentation.RandomAffine(degrees=(-45, 45), translate=(0, 0.35), p=0.3)
+    affine = kornia.augmentation.RandomAffine(degrees=(-1, 1), translate=(0, 0.35), p=1.0)
     standard_aug = DataAugmentation([noise, affine])
 
 
@@ -70,12 +70,24 @@ class ExactL2Noise:
 
 
 
-def get_augmentation(dset_class):
-    if dset_class == ds.CIFAR10:
-        return CIFARAugmentation.standard_aug
-    if dset_class == ds.Caltech101:
-        return CaltechAugmentation.standard_aug
-    if dset_class == ds.MNIST:
-        return MNISTAugmentation.standard_aug
+def get_augmentation(dset_class, variant=None):
+    if variant is None:
+        if dset_class == ds.CIFAR10:
+            return CIFARAugmentation.standard_aug
+        if dset_class == ds.Caltech101:
+            return CaltechAugmentation.standard_aug
+        if dset_class == ds.MNIST:
+            return MNISTAugmentation.standard_aug
+        else:
+            return MNISTAugmentation.standard_aug
     else:
-        return MNISTAugmentation.standard_aug
+        if variant == "translation":
+            if dset_class == ds.CIFAR10:
+                return CIFARAugmentation.affine
+            if dset_class == ds.Caltech101:
+                return CaltechAugmentation.affine
+            if dset_class == ds.MNIST:
+                return MNISTAugmentation.affine
+            else:
+                return MNISTAugmentation.affine
+

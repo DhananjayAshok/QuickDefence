@@ -57,25 +57,17 @@ def defence_density(
     :param de_adversarialize: True iff you want to measure density of defence(model)(adv_inps) = original_pred
     :return:
     """
-    all_results = []
+    all_results = [[] for i in range(adv_inps.shape[0])]  # We will save BS x n_samples binary indicators
     for i in tqdm(range(len(true_labels)), total=len(true_labels)):
-        if n_workers == 1:
-            density = 0
-            for n in range(n_samples):
-                op = None
-                if original_preds is not None:
-                    op = original_preds[i]
-                density += defence_density_single(
-                    model, adv_inps[i:i+1], true_labels[i], defence, op,
-                    robustness=robustness, de_adversarialize=de_adversarialize
-                )
-            all_results.append(density / n_samples)
-        else:
-            inp_args = (model, adv_inps[i:i+1], defence, true_labels[i], robustness)
-            pool = mp.Pool(processes=n_workers)
-            inps = [inp_args for i in range(n_samples)]
-            res = pool.starmap(defence_density_single, inps)
-            all_results.append(sum(res) / n_samples)
+        for n in range(n_samples):
+            op = None
+            if original_preds is not None:
+                op = original_preds[i]
+            indicator = defence_density_single(
+                model, adv_inps[i:i+1], true_labels[i], defence, op,
+                robustness=robustness, de_adversarialize=de_adversarialize
+            )
+            all_results[i].append(indicator)
     all_results = np.array(all_results)
     return all_results
 

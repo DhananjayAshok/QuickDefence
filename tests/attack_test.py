@@ -1,6 +1,6 @@
 import __init__  # Allow executation of this file as script from parent folder
 import torch
-from foolbox.attacks import LinfPGD
+from torchattacks import PGDL2
 
 import utils
 from attacks import ImageAttack
@@ -16,7 +16,7 @@ from utils import get_dataset_class, normalize_to_dict, show_grid
 
 
 def test_attack_visual(
-    attack_class=LinfPGD,
+    attack_class=PGDL2,
     dataset_name="mnist",
     n_samples=5,
     do_pred=False,
@@ -33,7 +33,7 @@ def test_attack_visual(
     X, y = get_torchvision_dataset_sample(dataset_class, batch_size=n_samples)
     if do_pred:
         pred = model(X).argmax(-1)
-    inv_norm_X = InverseNormalize(normalize_transform=normalize_transform)(X)
+    inv_norm = InverseNormalize(normalize_transform=normalize_transform)
 
     # Get adversarial examples
     preprocessing = normalize_to_dict(normalize_transform)
@@ -47,7 +47,7 @@ def test_attack_visual(
         captions = []
         index_to_class = get_index_to_class(dataset_name)
     for i in range(n_samples):
-        img_row = [inv_norm_X[i, :, :, :], adv_x[i, :, :, :]]
+        img_row = [inv_norm(X[i, :, :, :]), inv_norm(adv_x[i, :, :, :])]
         if do_pred:
             pred_label, adv_label = (
                 index_to_class(pred[i].item()),
@@ -87,12 +87,12 @@ def test_attack_maginitude(dataset_name, attack_name, attack_params):
 
 
 if __name__ == "__main__":
-    test_attack_maginitude(
-        "caltech101", attack_name="pgd_l2", attack_params={"eps": 1e-2}
+    #test_attack_maginitude(
+    #    "caltech101", attack_name="pgd_l2", attack_params={"eps": 1e-2}
+    #)
+    test_attack_visual(
+        dataset_name="cifar10",
+        n_samples=1,
+        do_pred=True,
+        attack_params={"eps": 2},
     )
-    # test_attack_visual(
-    #     dataset_name="caltech101",
-    #     n_samples=1,
-    #     do_pred=True,
-    #     attack_params={"epsilon": 0.0000001},
-    # )

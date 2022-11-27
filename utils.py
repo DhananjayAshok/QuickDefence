@@ -242,6 +242,32 @@ def measure_attack_stats(X, advs, disp=False):
     return l1_norm, l2_norm, linf_norm
 
 
+def analyze_density_result_array(arr, preprint="", indent="", show_full=False):
+    """
+
+    :param arr: (bs, n_samples) where arr[b, i] = 1 iff iff that robustnessmmetric was 1 on the ith augmentation of X[b]
+    :param preprint:
+    :param indent:
+    :param show_full:
+    :return:
+    """
+    print(f"{'X'*20}")
+    print(f"{indent}{preprint}")
+    print(f"{'-'*20}")
+    m = arr.mean(axis=1)
+    ma = arr.max(axis=1)
+    mi = arr.min(axis=1)
+    print(f"{indent}Average Across Batches:")
+    print(f"{indent}Mean: {m.mean()}, Max: {ma.mean()}, Min: {mi.mean()}")
+    print(f"{indent}Maximum Across Batches:")
+    print(f"{indent}Mean: {m.max()}, Max: {ma.max()}, Min: {mi.max()}")
+    print(f"{indent}Minimum Across Batches:")
+    print(f"{indent}Mean: {m.min()}, Max: {ma.min()}, Min: {mi.min()}")
+    if show_full:
+        print(arr)
+    return m, ma, mi
+
+
 class Parameters:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # device = "cpu"

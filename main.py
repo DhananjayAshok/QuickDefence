@@ -181,7 +181,7 @@ if __name__ == "__main__":
                 aug = augClass(degrees=(-rotation_degree, rotation_degree), p=1)
                 aug_list.append((aug, rotation_degree))
             for translation_perc in translation_percs:
-                aug = augClass(degrees=0, translate=translation_perc)
+                aug = augClass(degrees=0, translate=(0, translation_perc))
                 aug_list.append((aug, translation_perc))
         else:
             pass

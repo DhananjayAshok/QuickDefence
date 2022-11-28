@@ -110,49 +110,24 @@ def run_defence_experiment_2(dataset_class=CIFAR10, no_samples=32,
     model = get_model(dataset_class)
 
     X, y = get_torchvision_dataset_sample(dataset_class, batch_size=no_samples)
-    pred = model(X).argmax(-1)
+
 
     inverse_transform = InverseNormalize(normalize_transform=transform)
+    batch_transform = BatchNormalize(normalize_transform=transform)
     preprocessing = utils.normalize_to_dict(transform)
     if aug is None:
         aug = get_augmentation(dataset_class)
     image_X = inverse_transform(X)
-    auged_X = aug(image_X)
-    if show:
-        utils.show_grid(
-            [image_X[0], auged_X[0]], title="Augmentation", captions=["Image", "Augmented Image"]
-        )
-
+    auged_X = batch_transform(aug(image_X))
+    aug_pred = model(auged_X).argmax(-1)
     attack = ImageAttack(attack_class=attack_class, params=attack_params)
     advs = attack(
         model=model, input_batch=X, true_labels=y, preprocessing=preprocessing
     )
-    adv_pred = model(advs).argmax(-1)
-    (
-        accuracy,
-        robust_accuracy,
-        conditional_robust_accuracy,
-        robustness,
-        success,
-    ) = utils.get_attack_success_measures(model, inps=X, advs=advs, true_labels=y)
-    s_advs = advs[success]
-    s_y = y[success]
-    if sum(success) > 0:
-        density = image_defence_density(
-            model, s_advs, s_y, defence=aug, n_samples=density_n_samples, n_workers=1
-        )
-        robust_density = image_defence_density(
-                model, s_advs, s_y, defence=aug, n_samples=density_n_samples, n_workers=1, robustness=True
-            )
+    aug_advs = batch_transform(aug(inverse_transform(advs)))
+    aug_adv_pred = model(aug_advs).argmax(-1)
 
-        de_adversarial_density = image_defence_density(
-                model, s_advs, s_y, defence=aug, n_samples=density_n_samples, n_workers=1, de_adversarialize=True
-            )
-
-        correct_me, correct_ma, correct_mi = utils.analyze_density_result_array(density, preprint="Correct", indent=indent)
-        robust_me, robust_ma, robust_mi = utils.analyze_density_result_array(robust_density, preprint="Robust Density", indent=indent)
-        de_adv_me, de_adv_ma, de_adv_mi = utils.analyze_density_result_array(de_adversarial_density, preprint="De-Adversarial Density", indent=indent)
-    return utils.get_accuracy(y, pred), utils.get_accuracy(y, adv_pred), correct_me.mean(), robust_me.mean(), de_adv_me.mean()
+    return utils.get_accuracy(y, aug_pred), utils.get_accuracy(y, aug_adv_pred)
 
 
 if __name__ == "__main__":
@@ -160,14 +135,14 @@ if __name__ == "__main__":
     device = utils.Parameters.device
     import pandas as pd
 
-    columns = ["Augmentation", "Severity", "Metric", "Value"]
+    columns = ["Augmentation", "Severity", "Clean Accuracy", "Adversarial Accuracy"]
     data = []
 
     augClass_list = [kornia.augmentation.RandomGaussianNoise, kornia.augmentation.RandomAffine]
     # Noise, ROtation and Transform
-    noise_stds = [1, 2, 5]
-    rotation_degrees = [5, 10, 15]
-    translation_percs = [0.1, 0.2]
+    noise_stds = [0.001, 0.01, 0.1, 1, 10, 100, 1000]
+    rotation_degrees = [2, 4, 8, 16, 32, 64, 128, 180]
+    translation_percs = [0.1, 0.25, 0.5, 0.75, 1]
     dataset = ds.Caltech101
     attack_params = {"eps": 2}
     aug_list = []
@@ -181,21 +156,21 @@ if __name__ == "__main__":
                 aug = augClass(degrees=(-rotation_degree, rotation_degree), p=1)
                 aug_list.append((aug, rotation_degree))
             for translation_perc in translation_percs:
-                aug = augClass(degrees=0, translate=(0, translation_perc))
+                aug = augClass(degrees=0, translate=(0, translation_perc), p=1)
                 aug_list.append((aug, translation_perc))
         else:
             pass
     for aug, sev in aug_list:
         aname = aug.__class__.__name__
+        if "Affine" in aname:
+            if sev <= 1:
+                aname = "RandomTranslate"
+            else:
+                aname = "RandomRotation"
         print(f"{aname}: {sev}")
-        clean_accuracy, adv_accuracy, correct, robust, de_adv = \
-            run_defence_experiment_2(dataset_class=dataset, no_samples=32, attack_class=PGDL2,
-                                     attack_params=attack_params, density_n_samples=10, aug=aug, show=False)
-        data.append([aname, sev, "Clean Accuracy", clean_accuracy])
-        data.append([aname, sev, "Adv Accuracy", adv_accuracy])
-        data.append([aname, sev, "Correctness", correct])
-        data.append([aname, sev, "Robustness", robust])
-        data.append([aname, sev, "De-Adversarialize", de_adv])
+        clean_accuracy, adv_accuracy = run_defence_experiment_2(dataset_class=dataset, no_samples=100, attack_class=PGDL2,
+                                     attack_params=attack_params, aug=aug)
+        data.append([aname, sev, float(clean_accuracy), float(adv_accuracy)])
     df = pd.DataFrame(data=data, columns=columns)
     df.to_csv("Experiment2.csv", index=False)
 

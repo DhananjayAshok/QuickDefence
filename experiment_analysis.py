@@ -20,10 +20,25 @@ def print_results_e1(df):
 def get_e1():
     return pd.read_csv("Experiment1.csv")
 
+def get_e2():
+    return pd.read_csv("Experiment2.csv")
 
 
+def plot():
+    augs = list(df["Augmentation"].unique())
+    for aug in augs:
+        ds = df[df["Augmentation"] == aug]
+        ds = ds.set_index("Severity")
+        ds = ds * 100
+        ds["Base Rate"] = 1/101
+        sns.lineplot(data=ds)
+        plt.title(f"Model Accuracies over Severity for Augmentation: {aug}")
+        plt.ylabel("Percent")
+        plt.show()
 
-df = get_e1()
+if __name__ == "__main__":
+    df = get_e2()
+    plot()
 
 
 

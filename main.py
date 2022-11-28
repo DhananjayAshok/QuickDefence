@@ -111,7 +111,6 @@ def run_defence_experiment_2(dataset_class=CIFAR10, no_samples=32,
 
     X, y = get_torchvision_dataset_sample(dataset_class, batch_size=no_samples)
 
-
     inverse_transform = InverseNormalize(normalize_transform=transform)
     batch_transform = BatchNormalize(normalize_transform=transform)
     preprocessing = utils.normalize_to_dict(transform)
@@ -124,10 +123,11 @@ def run_defence_experiment_2(dataset_class=CIFAR10, no_samples=32,
     advs = attack(
         model=model, input_batch=X, true_labels=y, preprocessing=preprocessing
     )
+    adv_pred = model(advs).argmax(-1)
     aug_advs = batch_transform(aug(inverse_transform(advs)))
     aug_adv_pred = model(aug_advs).argmax(-1)
 
-    return utils.get_accuracy(y, aug_pred), utils.get_accuracy(y, aug_adv_pred)
+    return utils.get_accuracy(y, aug_pred), utils.get_accuracy(y, aug_adv_pred), utils.get_accuracy(adv_pred, aug_adv_pred)
 
 
 if __name__ == "__main__":
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     device = utils.Parameters.device
     import pandas as pd
 
-    columns = ["Augmentation", "Severity", "Clean Accuracy", "Adversarial Accuracy"]
+    columns = ["Augmentation", "Severity", "Clean Accuracy", "Adversarial Accuracy", "Adversarial Robustness"]
     data = []
 
     augClass_list = [kornia.augmentation.RandomGaussianNoise, kornia.augmentation.RandomAffine]
@@ -168,9 +168,9 @@ if __name__ == "__main__":
             else:
                 aname = "RandomRotation"
         print(f"{aname}: {sev}")
-        clean_accuracy, adv_accuracy = run_defence_experiment_2(dataset_class=dataset, no_samples=100, attack_class=PGDL2,
+        clean_accuracy, adv_accuracy, adv_rob = run_defence_experiment_2(dataset_class=dataset, no_samples=100, attack_class=PGDL2,
                                      attack_params=attack_params, aug=aug)
-        data.append([aname, sev, float(clean_accuracy), float(adv_accuracy)])
+        data.append([aname, sev, float(clean_accuracy), float(adv_accuracy), float(adv_rob)])
     df = pd.DataFrame(data=data, columns=columns)
     df.to_csv("Experiment2.csv", index=False)
 

@@ -1,51 +1,175 @@
-Experiment parameters: Namespace(attack='linf', batch_size=32, dataset='cifar10', defence_sample_rate=10, epsilon=0.01)
-{'dataset': 'cifar10', 'attack': 'linf', 'epsilon': 0.01, 'batch_size': 32, 'defence_sample_rate': 10}
-Files already downloaded and verified
-Metrics:
-{'Undefended Clean Accuracy': 0.0, 'Undefended Advsarial Accuracy': 0.0, 'Undefended Advsarial Robustness': 0.4375, 'Undefended Advsarial Conditional Robustness': nan, 'Defended Clean Accuracy': 0.0, 'Defended Advsarial Accuracy': 0.0, 'Defended Advsarial Robustness': 0.59375, 'Defended Advsarial Conditional Robustness': nan}
-Experiment parameters: Namespace(attack='linf', batch_size=32, dataset='cifar10', defence_sample_rate=10, epsilon=0.01)
-{'dataset': 'cifar10', 'attack': 'linf', 'epsilon': 0.01, 'batch_size': 32, 'defence_sample_rate': 10}
-Files already downloaded and verified
-Experiment parameters: Namespace(attack='linf', batch_size=32, dataset='cifar10', defence_sample_rate=10, epsilon=0.01)
-{'dataset': 'cifar10', 'attack': 'linf', 'epsilon': 0.01, 'batch_size': 32, 'defence_sample_rate': 10}
-Files already downloaded and verified
-Metrics:
-{'Undefended Clean Accuracy': 0.0, 'Undefended Advsarial Accuracy': 0.03125, 'Undefended Advsarial Robustness': 0.3854166666666667, 'Undefended Advsarial Conditional Robustness': nan, 'Defended Clean Accuracy': 0.0, 'Defended Advsarial Accuracy': 0.03125, 'Defended Advsarial Robustness': 0.5208333333333334, 'Defended Advsarial Conditional Robustness': nan}
-Experiment parameters: Namespace(attack='linf', batch_size=32, dataset='cifar10', defence_sample_rate=10, epsilon=0.01)
-{'dataset': 'cifar10', 'attack': 'linf', 'epsilon': 0.01, 'batch_size': 32, 'defence_sample_rate': 10}
-Files already downloaded and verified
-tensor([3., 8., 8., 0., 6., 6., 1., 6., 3., 1., 0., 9., 5., 7., 9., 8., 5., 7.,
-        8., 6., 7., 0., 4., 9., 5., 2., 4., 0., 9., 6., 6., 5., 4., 5., 9., 2.,
-        4., 1., 9., 5., 4., 6., 5., 6., 0., 9., 3., 9., 7., 6., 9., 8., 0., 3.,
-        8., 8., 7., 7., 4., 6., 7., 3., 6., 3., 6., 2., 1., 2., 3., 7., 2., 6.,
-        8., 8., 0., 2., 9., 3., 3., 8., 8., 1., 1., 7., 2., 5., 2., 7., 8., 9.,
-        0., 3., 8., 6., 4., 6.])
-tensor([8, 8, 2, 7, 0, 6, 7, 8, 5, 5, 5, 8, 6, 9, 0, 7, 7, 4, 0, 1, 4, 4, 6, 1,
-        2, 3, 5, 0, 4, 8, 1, 8])
-tensor([4., 7., 4., 5., 7., 4., 4., 5., 8., 7., 4., 4., 4., 8., 4., 7., 4., 4.,
-        5., 8., 8., 6., 8., 7., 8., 8., 8., 7., 8., 7., 7., 4., 4., 7., 4., 4.,
-        8., 4., 4., 4., 8., 7., 6., 9., 4., 4., 8., 4., 8., 5., 4., 4., 8., 4.,
-        6., 5., 8., 4., 4., 4., 8., 8., 4., 6., 0., 8., 6., 7., 0., 4., 7., 4.,
-        4., 5., 4., 8., 7., 4., 8., 5., 5., 4., 7., 4., 8., 4., 7., 7., 4., 5.,
-        5., 8., 4., 8., 6., 4.])
-Metrics:
-{'Undefended Clean Accuracy': 0.0, 'Undefended Advsarial Accuracy': 0.03125, 'Undefended Advsarial Robustness': 0.3854166666666667, 'Undefended Advsarial Conditional Robustness': nan, 'Defended Clean Accuracy': 0.0, 'Defended Advsarial Accuracy': 0.0416666679084301, 'Defended Advsarial Robustness': 0.5625, 'Defended Advsarial Conditional Robustness': nan}
-Experiment parameters: Namespace(attack='linf', batch_size=32, dataset='cifar10', defence_sample_rate=10, epsilon=0.01)
-{'dataset': 'cifar10', 'attack': 'linf', 'epsilon': 0.01, 'batch_size': 32, 'defence_sample_rate': 10}
-Files already downloaded and verified
-Experiment parameters: Namespace(attack='linf', batch_size=32, dataset='cifar10', defence_sample_rate=10, epsilon=0.01)
-{'dataset': 'cifar10', 'attack': 'linf', 'epsilon': 0.01, 'batch_size': 32, 'defence_sample_rate': 10}
-Files already downloaded and verified
-torch.Size([64]) torch.Size([32]) torch.Size([64])
-tensor([3., 8., 8., 0., 6., 6., 1., 6., 3., 1., 0., 9., 5., 7., 9., 8., 5., 7.,
-        8., 6., 7., 0., 4., 9., 5., 2., 4., 0., 9., 6., 6., 5., 4., 5., 9., 2.,
-        4., 1., 9., 5., 4., 6., 5., 6., 0., 9., 3., 9., 7., 6., 9., 8., 0., 3.,
-        8., 8., 7., 7., 4., 6., 7., 3., 6., 3.])
-tensor([1, 0, 4, 0, 8, 4, 4, 0, 6, 7, 0, 0, 5, 4, 9, 4, 8, 8, 5, 5, 1, 8, 6, 5,
-        8, 0, 1, 0, 8, 0, 8, 4])
-tensor([4., 7., 4., 5., 7., 4., 4., 5., 8., 7., 4., 4., 4., 8., 4., 7., 4., 4.,
-        5., 8., 8., 6., 8., 7., 8., 8., 8., 7., 8., 7., 7., 4., 4., 7., 4., 4.,
-        8., 4., 4., 4., 8., 7., 6., 9., 4., 4., 8., 4., 8., 5., 4., 4., 8., 4.,
-        6., 5., 8., 4., 4., 4., 8., 8., 4., 6.])
-Metrics:
-{'Undefended Clean Accuracy': 0.0, 'Undefended Advsarial Accuracy': 0.03125, 'Undefended Advsarial Robustness': 0.40625, 'Undefended Advsarial Conditional Robustness': nan, 'Defended Clean Accuracy': 0.0, 'Defended Advsarial Accuracy': 0.046875, 'Defended Advsarial Robustness': 0.53125, 'Defended Advsarial Conditional Robustness': nan}
+Experiment 1 Notes:
+
+Noteworthy Tables Below
+Consistent Observations:
+	Adding noise absolutely doesn't work
+	Translation and Rotation actually work at times, and consistently so across datasets, however even these methods do not always succeed across samples (min max, min mean, min min are all near 0)
+	For Caltech Translation and Rotation actually show promise for some improvement. And suggests that different augmentations have different effects.  
+
+==============================================================================================================================================
+Correct
+==============================================================================================================================================
+Metric: Correct, SampleAgg Mean, BatchAgg Mean
+                                                                  val
+Dataset    Epsilon Augmentation   Metric  SampleAgg BatchAgg         
+CIFAR10    1       L2 Noise eps:1 Correct Mean      Mean      0.00000
+           2       L2 Noise eps:2 Correct Mean      Mean      0.00000
+                   Rotate         Correct Mean      Mean      0.13300
+                   Translate      Correct Mean      Mean      0.22430
+           5       L2 Noise eps:5 Correct Mean      Mean      0.00000
+CalTech101 1       L2 Noise eps:1 Correct Mean      Mean      0.00000
+           2       L2 Noise eps:2 Correct Mean      Mean      0.04347
+                   Rotate         Correct Mean      Mean      0.31760
+                   Translate      Correct Mean      Mean      0.42570
+           5       L2 Noise eps:5 Correct Mean      Mean      0.00000
+MNIST      1       L2 Noise eps:1 Correct Mean      Mean      0.04200
+           2       L2 Noise eps:2 Correct Mean      Mean      0.10560
+                   Rotate         Correct Mean      Mean      0.64700
+                   Translate      Correct Mean      Mean      0.19000
+           5       L2 Noise eps:5 Correct Mean      Mean      0.02000
+
+
+Metric: Correct, SampleAgg Mean, BatchAgg Max
+                                                                  val
+Dataset    Epsilon Augmentation   Metric  SampleAgg BatchAgg         
+CIFAR10    1       L2 Noise eps:1 Correct Mean      Max       0.00000
+           2       L2 Noise eps:2 Correct Mean      Max       0.00000
+                   Rotate         Correct Mean      Max       0.50000
+                   Translate      Correct Mean      Max       0.78260
+           5       L2 Noise eps:5 Correct Mean      Max       0.00000
+CalTech101 1       L2 Noise eps:1 Correct Mean      Max       0.00000
+           2       L2 Noise eps:2 Correct Mean      Max       0.04347
+                   Rotate         Correct Mean      Max       0.88460
+                   Translate      Correct Mean      Max       0.80760
+           5       L2 Noise eps:5 Correct Mean      Max       0.00000
+MNIST      1       L2 Noise eps:1 Correct Mean      Max       0.16600
+           2       L2 Noise eps:2 Correct Mean      Max       0.13000
+                   Rotate         Correct Mean      Max       0.95400
+                   Translate      Correct Mean      Max       0.93000
+           5       L2 Noise eps:5 Correct Mean      Max       0.00000
+
+
+
+
+Metric: Correct, SampleAgg Max, BatchAgg Mean
+                                                                   val
+Dataset    Epsilon Augmentation   Metric  SampleAgg BatchAgg          
+CIFAR10    1       L2 Noise eps:1 Correct Max       Mean      0.000000
+           2       L2 Noise eps:2 Correct Max       Mean      0.000000
+                   Rotate         Correct Max       Mean      0.576667
+                   Translate      Correct Max       Mean      0.513333
+           5       L2 Noise eps:5 Correct Max       Mean      0.000000
+CalTech101 1       L2 Noise eps:1 Correct Max       Mean      0.000000
+           2       L2 Noise eps:2 Correct Max       Mean      1.000000
+                   Rotate         Correct Max       Mean      0.586667
+                   Translate      Correct Max       Mean      1.000000
+           5       L2 Noise eps:5 Correct Max       Mean      0.000000
+MNIST      1       L2 Noise eps:1 Correct Max       Mean      0.453333
+           2       L2 Noise eps:2 Correct Max       Mean      0.660000
+                   Rotate         Correct Max       Mean      0.663333
+                   Translate      Correct Max       Mean      0.450000
+           5       L2 Noise eps:5 Correct Max       Mean      1.333333
+==============================================================================================================================================
+Robust
+==============================================================================================================================================
+Metric: Robust, SampleAgg Mean, BatchAgg Mean
+                                                                 val
+Dataset    Epsilon Augmentation   Metric SampleAgg BatchAgg         
+CIFAR10    1       L2 Noise eps:1 Robust Mean      Mean      0.00000
+           2       L2 Noise eps:2 Robust Mean      Mean      0.00000
+                   Rotate         Robust Mean      Mean      0.24630
+                   Translate      Robust Mean      Mean      0.47652
+           5       L2 Noise eps:5 Robust Mean      Mean      0.00000
+CalTech101 1       L2 Noise eps:1 Robust Mean      Mean      0.00000
+           2       L2 Noise eps:2 Robust Mean      Mean      0.04347
+                   Rotate         Robust Mean      Mean      0.61600
+                   Translate      Robust Mean      Mean      0.66570
+           5       L2 Noise eps:5 Robust Mean      Mean      0.00582
+MNIST      1       L2 Noise eps:1 Robust Mean      Mean      0.03300
+           2       L2 Noise eps:2 Robust Mean      Mean      0.13782
+                   Rotate         Robust Mean      Mean      0.67000
+                   Translate      Robust Mean      Mean      0.71060
+           5       L2 Noise eps:5 Robust Mean      Mean      0.03690
+
+
+Metric: Robust, SampleAgg Mean, BatchAgg Max
+                                                                 val
+Dataset    Epsilon Augmentation   Metric SampleAgg BatchAgg         
+CIFAR10    1       L2 Noise eps:1 Robust Mean      Max       0.00000
+           2       L2 Noise eps:2 Robust Mean      Max       0.00000
+                   Rotate         Robust Mean      Max       0.76600
+                   Translate      Robust Mean      Max       1.00000
+           5       L2 Noise eps:5 Robust Mean      Max       0.00000
+CalTech101 1       L2 Noise eps:1 Robust Mean      Max       0.00000
+           2       L2 Noise eps:2 Robust Mean      Max       0.04347
+                   Rotate         Robust Mean      Max       1.00000
+                   Translate      Robust Mean      Max       1.00000
+           5       L2 Noise eps:5 Robust Mean      Max       0.03448
+MNIST      1       L2 Noise eps:1 Robust Mean      Max       0.16600
+           2       L2 Noise eps:2 Robust Mean      Max       0.17391
+                   Rotate         Robust Mean      Max       0.95400
+                   Translate      Robust Mean      Max       1.00000
+           5       L2 Noise eps:5 Robust Mean      Max       0.11500
+
+
+Metric: Robust, SampleAgg Mean, BatchAgg Min
+                                                                 val
+Dataset    Epsilon Augmentation   Metric SampleAgg BatchAgg         
+CIFAR10    1       L2 Noise eps:1 Robust Mean      Min       0.00000
+           2       L2 Noise eps:2 Robust Mean      Min       0.00000
+                   Rotate         Robust Mean      Min       0.00000
+                   Translate      Robust Mean      Min       0.00000
+           5       L2 Noise eps:5 Robust Mean      Min       0.00000
+CalTech101 1       L2 Noise eps:1 Robust Mean      Min       0.00000
+           2       L2 Noise eps:2 Robust Mean      Min       0.04347
+                   Rotate         Robust Mean      Min       0.00000
+                   Translate      Robust Mean      Min       0.07690
+           5       L2 Noise eps:5 Robust Mean      Min       0.00000
+MNIST      1       L2 Noise eps:1 Robust Mean      Min       0.00000
+           2       L2 Noise eps:2 Robust Mean      Min       0.00000
+                   Rotate         Robust Mean      Min       0.04500
+                   Translate      Robust Mean      Min       0.06250
+           5       L2 Noise eps:5 Robust Mean      Min       0.00000
+
+
+==============================================================================================================================================
+De-Adversarial
+==============================================================================================================================================
+Metric: De-adversarial, SampleAgg Mean, BatchAgg Mean
+                                                                         val
+Dataset    Epsilon Augmentation   Metric         SampleAgg BatchAgg         
+CIFAR10    1       L2 Noise eps:1 De-adversarial Mean      Mean      0.00000
+           2       L2 Noise eps:2 De-adversarial Mean      Mean      0.00000
+                   Rotate         De-adversarial Mean      Mean      0.13430
+                   Translate      De-adversarial Mean      Mean      0.20170
+           5       L2 Noise eps:5 De-adversarial Mean      Mean      0.00000
+CalTech101 1       L2 Noise eps:1 De-adversarial Mean      Mean      0.00000
+           2       L2 Noise eps:2 De-adversarial Mean      Mean      0.04347
+                   Rotate         De-adversarial Mean      Mean      0.32000
+                   Translate      De-adversarial Mean      Mean      0.42650
+           5       L2 Noise eps:5 De-adversarial Mean      Mean      0.00000
+MNIST      1       L2 Noise eps:1 De-adversarial Mean      Mean      0.03400
+           2       L2 Noise eps:2 De-adversarial Mean      Mean      0.09900
+                   Rotate         De-adversarial Mean      Mean      0.65900
+                   Translate      De-adversarial Mean      Mean      0.17680
+           5       L2 Noise eps:5 De-adversarial Mean      Mean      0.01700
+Metric: De-adversarial, SampleAgg Mean, BatchAgg Max
+                                                                         val
+Dataset    Epsilon Augmentation   Metric         SampleAgg BatchAgg         
+CIFAR10    1       L2 Noise eps:1 De-adversarial Mean      Max       0.00000
+           2       L2 Noise eps:2 De-adversarial Mean      Max       0.00000
+                   Rotate         De-adversarial Mean      Max       0.50000
+                   Translate      De-adversarial Mean      Max       0.78260
+           5       L2 Noise eps:5 De-adversarial Mean      Max       0.00000
+CalTech101 1       L2 Noise eps:1 De-adversarial Mean      Max       0.00000
+           2       L2 Noise eps:2 De-adversarial Mean      Max       0.04347
+                   Rotate         De-adversarial Mean      Max       0.88000
+                   Translate      De-adversarial Mean      Max       0.80760
+           5       L2 Noise eps:5 De-adversarial Mean      Max       0.00000
+MNIST      1       L2 Noise eps:1 De-adversarial Mean      Max       0.16000
+           2       L2 Noise eps:2 De-adversarial Mean      Max       0.13000
+                   Rotate         De-adversarial Mean      Max       0.95400
+                   Translate      De-adversarial Mean      Max       0.93750
+           5       L2 Noise eps:5 De-adversarial Mean      Max       0.15000
+
+

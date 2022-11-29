@@ -141,7 +141,7 @@ def get_defence_results(
     all_undef_adv_pred = torch.zeros(0)
     all_def_pred = torch.zeros(0)
     all_def_adv_pred = torch.zeros(0)
-    for (X, y) in tqdm(dataloader, total=len(dataset)):
+    for (X, y) in tqdm(dataloader, total=len(dataloader)):
         all_y = torch.cat((all_y, y))
 
         # Get undefended clean predictions

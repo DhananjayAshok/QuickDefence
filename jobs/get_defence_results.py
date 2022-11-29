@@ -101,6 +101,8 @@ def get_defence_results(
     attack_params,
     batch_size,
     defence_sample_rate,
+    rotation_degree,
+    translation,
 ):
     # Get dataset
     dataset_class = DATASETS[dataset_name]
@@ -114,12 +116,25 @@ def get_defence_results(
     # Get model and defence's augmentation
     model = get_model(dataset_class)
     model.eval()
-    augmentation = get_augmentation(dataset_class)
+    degrees = (-rotation_degree, rotation_degree)
+    translate = (0, translation)
+    augmentation = kornia.augmentation.RandomAffine(
+        degrees=degrees, translate=translate, p=1.0
+    )
 
-    # Get transforms
+    # Get defended network
     transform = dataset.transform.transforms[2]
     batch_transform = BatchNormalize(normalize_transform=transform)
     inverse_transform = InverseNormalize(normalize_transform=transform)
+    defended_model = DefendedNetwork(
+        network=model,
+        data_augmentation=augmentation,
+        data_n_dims=3,
+        transform=batch_transform,
+        inverse_transform=inverse_transform,
+        output_shape=(NUM_LABELS[dataset_name],),
+        sample_rate=defence_sample_rate,
+    )
 
     all_y = torch.zeros(0)
     all_undef_pred = torch.zeros(0)
@@ -143,17 +158,6 @@ def get_defence_results(
         # Get undefended adv predictions
         undef_adv_pred = model(adv_X).argmax(-1)
         all_undef_adv_pred = torch.cat((all_undef_adv_pred, undef_adv_pred))
-
-        # Get defended network
-        defended_model = DefendedNetwork(
-            network=model,
-            data_augmentation=augmentation,
-            data_n_dims=3,
-            transform=batch_transform,
-            inverse_transform=inverse_transform,
-            output_shape=(NUM_LABELS[dataset_name],),
-            sample_rate=defence_sample_rate,
-        )
 
         # Get defended predictions
         def_pred = defended_model(X).argmax(-1)
@@ -190,6 +194,24 @@ def get_defence_results(
     return metrics
 
 
+def get_result_filepath(attack_name, dataset_name):
+    from init_path import parent_path
+
+    folder = (
+        Path(parent_path) / "results" / "defence_results" / attack_name / dataset_name
+    )
+    folder.mkdir(parents=True, exist_ok=True)
+
+    def get_filename(idx):
+        return f"{idx}.json"
+
+    idx = 0
+    while (folder / get_filename(idx)).exists():
+        idx += 1
+
+    return folder / get_filename(idx)
+
+
 if __name__ == "__main__":
     args = get_parser().parse_args()
     attack_params = {"eps": args.epsilon}
@@ -203,17 +225,16 @@ if __name__ == "__main__":
             attack_params=attack_params,
             batch_size=args.batch_size,
             defence_sample_rate=args.defence_sample_rate,
+            rotation_degree=args.rotation_degree,
+            translation=args.translation,
         )
         print(f"Metrics:\n{metrics}")
 
         # Save results
         results = metrics
         results.update(vars(args))
-        result_folder = Path(
-            init_path.parent_path + f"/results/{args.attack}/{args.dataset}"
-        )
-        result_folder.mkdir(parents=True, exist_ok=True)
-        with open(result_folder / "result.json", "w") as f:
+        filepath = get_result_filepath(args.attack, args.dataset)
+        with open(filepath, "w") as f:
             json.dump(metrics, f, indent=2)
     else:
         test_defence(

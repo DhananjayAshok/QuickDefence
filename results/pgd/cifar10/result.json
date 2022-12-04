@@ -1,0 +1,15 @@
+{
+  "Undefended Clean Accuracy": 0.822700023651123,
+  "Undefended Advsarial Accuracy": 0.1834000051021576,
+  "Undefended Advsarial Robustness": 0.2357,
+  "Undefended Advsarial Conditional Robustness": 0.21149872371459827,
+  "Defended Clean Accuracy": 0.6685000061988831,
+  "Defended Advsarial Accuracy": 0.23819999396800995,
+  "Defended Advsarial Robustness": 0.3373,
+  "Defended Advsarial Conditional Robustness": 0.32909498878085264,
+  "dataset": "cifar10",
+  "attack": "pgd",
+  "epsilon": 0.01,
+  "batch_size": 32,
+  "defence_sample_rate": 10
+}

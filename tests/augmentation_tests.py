@@ -3,6 +3,7 @@ import kornia
 import matplotlib.pyplot as plt
 import torch
 
+import augmentations
 import utils
 from datasets import (
     BatchNormalize,
@@ -122,9 +123,7 @@ affine_param_set = rotation_param_set + translation_param_set
 
 if __name__ == "__main__":
     from torchvision.datasets import CIFAR10, MNIST, Caltech101
-
-    for dataset in [Caltech101]:
-        test_augmentation_maginitude(noiseClass, dataset, param_sets=noise_param_set)
+    test_augmentation_visual(kornia.augmentation.RandomAffine, CIFAR10, param_sets=[{"degrees": (29, 30), "translate": (i, i), "p": 1} for i in [0.1, 0.2, 0.3, 0.4]])
     # for dataset in [MNIST]:
     #    test_augmentation_visual(noiseClass, dataset, param_sets=noise_param_set)
     #    test_augmentation_visual(affineClass, dataset, param_sets=affine_param_set)

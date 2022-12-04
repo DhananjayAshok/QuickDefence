@@ -1,3 +1,4 @@
+import pandas as pd
 import torch.multiprocessing as mp
 import torchvision.transforms as transforms
 from torchvision.datasets import CIFAR10
@@ -15,13 +16,14 @@ from models import get_model
 import torchvision.datasets as ds
 
 
-def run_defence_experiment_1(dataset_class=CIFAR10, output_shape=(10, ), no_samples=32,
+def run_defence_experiment_1(model=None, dataset_class=CIFAR10, output_shape=(10, ), no_samples=32,
                            attack_class=PGDL2, attack_params=None,
                            aug=None, sample_rate=10, density_n_samples=100,
                            show=True, density=False, indent="\t"*0):
     transform = get_torchvision_dataset(dataset_class, train=False).transform.transforms[2]
     index_to_class = get_index_to_class(dataset_class=dataset_class)
-    model = get_model(dataset_class)
+    if model is None:
+        model = get_model(dataset_class)
 
     X, y = get_torchvision_dataset_sample(dataset_class, batch_size=no_samples)
     pred = model(X).argmax(-1)
@@ -46,7 +48,10 @@ def run_defence_experiment_1(dataset_class=CIFAR10, output_shape=(10, ), no_samp
         output_shape=output_shape,
         sample_rate=sample_rate,
     )
-    defended_pred = defended.predict(X)
+    defended_pred = defended(X)
+    top = defended_pred.topk(k=2, dim=-1)[0]
+    confidence = top[:, 0] - top[:, 1]
+    defended_pred = defended_pred.argmax(-1)
     print(
         f"{indent}Clean Accuracy {utils.get_accuracy(y, pred)} vs Defended Accuracy "
         f"{utils.get_accuracy(y, defended_pred)}"
@@ -58,7 +63,10 @@ def run_defence_experiment_1(dataset_class=CIFAR10, output_shape=(10, ), no_samp
     )
     adv_img = inverse_transform(advs)
     adv_pred = model(advs).argmax(-1)
-    defended_adv_pred = defended(advs).argmax(-1)
+    defended_adv_pred = defended(advs)
+    top = defended_adv_pred.topk(k=2, dim=-1)[0]
+    adv_confidence = top[:, 0] - top[:, 1]
+    defended_adv_pred = defended_adv_pred.argmax(-1)
     (
         accuracy,
         robust_accuracy,
@@ -99,7 +107,7 @@ def run_defence_experiment_1(dataset_class=CIFAR10, output_shape=(10, ), no_samp
             utils.analyze_density_result_array(density, preprint="Density", indent=indent)
             utils.analyze_density_result_array(robust_density, preprint="Robust Density", indent=indent)
             utils.analyze_density_result_array(de_adversarial_density, preprint="De-Adversarial Density", indent=indent)
-    return model, X, y, advs, success, success_2, batch_transform, inverse_transform
+    return utils.get_accuracy(y, defended_pred), utils.get_accuracy(y, defended_adv_pred), confidence, adv_confidence
 
 
 def run_defence_experiment_2(dataset_class=CIFAR10, no_samples=32,
@@ -133,47 +141,37 @@ def run_defence_experiment_2(dataset_class=CIFAR10, no_samples=32,
 if __name__ == "__main__":
     mp.set_start_method("spawn")
     device = utils.Parameters.device
-    import pandas as pd
-
-    columns = ["Augmentation", "Severity", "Clean Accuracy", "Adversarial Accuracy", "Adversarial Robustness"]
+    dataset = ds.CIFAR10
+    aug = augmentations.ExactL2Noise(eps=5)
+    columns = ["Model", "Attack Intensity", "Accuracy", "Confidence"]
     data = []
-
-    augClass_list = [kornia.augmentation.RandomGaussianNoise, kornia.augmentation.RandomAffine]
-    # Noise, ROtation and Transform
-    noise_stds = [0.001, 0.01, 0.1, 1, 10, 100, 1000]
-    rotation_degrees = [2, 4, 8, 16, 32, 64, 128, 180]
-    translation_percs = [0.1, 0.25, 0.5, 0.75, 1]
-    dataset = ds.Caltech101
-    attack_params = {"eps": 2}
-    aug_list = []
-    for augClass in augClass_list:
-        if augClass == kornia.augmentation.RandomGaussianNoise: # If aug is noise
-            for std in noise_stds:
-                aug = augClass(std=std, p=1)
-                aug_list.append((aug, std))
-        elif augClass == kornia.augmentation.RandomAffine: # If aug is rotation
-            for rotation_degree in rotation_degrees:
-                aug = augClass(degrees=(-rotation_degree, rotation_degree), p=1)
-                aug_list.append((aug, rotation_degree))
-            for translation_perc in translation_percs:
-                aug = augClass(degrees=0, translate=(0, translation_perc), p=1)
-                aug_list.append((aug, translation_perc))
-        else:
-            pass
-    for aug, sev in aug_list:
-        aname = aug.__class__.__name__
-        if "Affine" in aname:
-            if sev <= 1:
-                aname = "RandomTranslate"
+    models = ["UU", "UA", "UN" "AU", "AA", "AN"]
+    attack_intensities = [0, 0.1, 0.25, 0.5, 1, 2, 4, 8]
+    for model_t in models:
+        for eps in attack_intensities:
+            if model_t in ["UU", "UA", "UN"]:
+                model = get_model(CIFAR10, aug=False)
             else:
-                aname = "RandomRotation"
-        print(f"{aname}: {sev}")
-        clean_accuracy, adv_accuracy, adv_rob = run_defence_experiment_2(dataset_class=dataset, no_samples=100, attack_class=PGDL2,
-                                     attack_params=attack_params, aug=aug)
-        data.append([aname, sev, float(clean_accuracy), float(adv_accuracy), float(adv_rob)])
+                model = get_model(CIFAR10, aug=True)
+            if model_t in ["UU", "AU"]:
+                aug = lambda x: x
+            elif model_t in ["UA", "AA"]:
+                aug = get_augmentation(CIFAR10)
+            else:
+                aug = augmentations.CIFARAugmentation.noise
+            if eps == 0:
+                attack_params = {"eps": 0.1}
+                clean_accuracy, adv_accuracy, confidence, adv_confidence = run_defence_experiment_1(model=model,
+                                                                                         attack_params=attack_params,
+                                                                                         dataset_class=dataset, aug=aug,
+                                                                                         show=False)
+                data.append([model_t, eps, clean_accuracy, confidence])
+            else:
+                attack_params = {"eps": eps}
+                clean_accuracy, adv_accuracy, confidence, adv_confidence = run_defence_experiment_1(model=model,
+                                                                                         attack_params=attack_params,
+                                                                                         dataset_class=dataset, aug=aug,
+                                                                                         show=False)
+                data.append([model_t, eps, adv_accuracy, adv_confidence])
     df = pd.DataFrame(data=data, columns=columns)
-    df.to_csv("Experiment2.csv", index=False)
-
-
-
-
+    df.to_csv("NewExperiment1.csv")

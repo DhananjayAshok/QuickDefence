@@ -21,12 +21,39 @@ class DataAugmentation(nn.Module):
         return str(self.auglist)
 
 
+
+
+
+class ExactLinfNoise:
+    def __init__(self, eps, temp=1):
+        self.eps = eps
+        self.temp = temp
+
+    def __call__(self, x):
+        val = self.eps * self.temp
+        n = ((torch.rand(x.size())/(2*val)) - val).to(x.device)
+        return x+n
+
+
+class ExactL2Noise:
+    def __init__(self, eps, temp=1):
+        self.eps = eps
+        self.temp = temp
+
+    def __call__(self, x):
+        val = self.eps * self.temp
+        n = torch.rand(x.size()) - 0.5
+        n_norm = n.view(x.shape[0], -1).norm(dim=1).max()
+        n = n / n_norm
+        n = (n * val).to(x.device)
+        return x+n
+
+
 class CIFARAugmentation:
-    noise = kornia.augmentation.RandomGaussianNoise(std=0.05, p=0.6)
-    color = kornia.augmentation.ColorJiggle(brightness=(0.9, 1.1), contrast=(1, 2), hue=(-0.25, 0.25), saturation=(0, 5),
-                                            p=0.6)
-    affine = kornia.augmentation.RandomAffine(degrees=(-1, 1), translate=(0, 0.2), p=1.0)
-    standard_aug = DataAugmentation([noise, color, affine])
+    noise = ExactL2Noise(eps=5)
+    rot = kornia.augmentation.RandomAffine(degrees=(-35, 35), p=1.0)
+    trans = kornia.augmentation.RandomAffine(degrees=1, translate=(0.2, 0.2), p=1.0)
+    standard_aug = DataAugmentation([noise, rot, trans])
 
 
 class CaltechAugmentation:
@@ -42,31 +69,6 @@ class MNISTAugmentation:
     noise = kornia.augmentation.RandomGaussianNoise(std=0.005, p=0.3)
     affine = kornia.augmentation.RandomAffine(degrees=(-1, 1), translate=(0, 0.35), p=1.0)
     standard_aug = DataAugmentation([noise, affine])
-
-
-class ExactLinfNoise:
-    def __init__(self, eps, temp=1):
-        self.eps = eps
-        self.temp = temp
-
-    def __call__(self, x):
-        val = self.eps * self.temp
-        n = (torch.rand(x.size())/(2*val)) - val
-        return x+n
-
-
-class ExactL2Noise:
-    def __init__(self, eps, temp=1):
-        self.eps = eps
-        self.temp = temp
-
-    def __call__(self, x):
-        val = self.eps * self.temp
-        n = torch.rand(x.size()) - 0.5
-        n_norm = n.view(x.shape[0], -1).norm(dim=1).max()
-        n = n / n_norm
-        n = n * val
-        return x+n
 
 
 

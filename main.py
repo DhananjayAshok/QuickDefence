@@ -107,7 +107,7 @@ def run_defence_experiment_1(model=None, dataset_class=CIFAR10, output_shape=(10
             utils.analyze_density_result_array(density, preprint="Density", indent=indent)
             utils.analyze_density_result_array(robust_density, preprint="Robust Density", indent=indent)
             utils.analyze_density_result_array(de_adversarial_density, preprint="De-Adversarial Density", indent=indent)
-    return utils.get_accuracy(y, defended_pred), utils.get_accuracy(y, defended_adv_pred), confidence, adv_confidence
+    return utils.get_accuracy(y, defended_pred), utils.get_accuracy(adv_pred, defended_adv_pred), confidence, adv_confidence
 
 
 def run_defence_experiment_2(dataset_class=CIFAR10, no_samples=32,
@@ -142,36 +142,46 @@ if __name__ == "__main__":
     mp.set_start_method("spawn")
     device = utils.Parameters.device
     dataset = ds.CIFAR10
-    aug = augmentations.ExactL2Noise(eps=5)
-    columns = ["Model", "Attack Intensity", "Accuracy", "Confidence"]
+    attack_params = {"eps": 2}
+    columns = ["Model", "Adversarial", "Augmentation", "Intensity",  "Accuracy", "Confidence"]
     data = []
-    models = ["UU", "UA", "UN" "AU", "AA", "AN"]
-    attack_intensities = [0, 0.1, 0.25, 0.5, 1, 2, 4, 8]
+    models = ["U", "A"]
+    augmentation_set = ["Noise", "Rotation", "Translation"]
     for model_t in models:
-        for eps in attack_intensities:
-            if model_t in ["UU", "UA", "UN"]:
-                model = get_model(CIFAR10, aug=False)
-            else:
-                model = get_model(CIFAR10, aug=True)
-            if model_t in ["UU", "AU"]:
-                aug = lambda x: x
-            elif model_t in ["UA", "AA"]:
-                aug = get_augmentation(CIFAR10)
-            else:
-                aug = augmentations.CIFARAugmentation.noise
-            if eps == 0:
-                attack_params = {"eps": 0.1}
-                clean_accuracy, adv_accuracy, confidence, adv_confidence = run_defence_experiment_1(model=model,
-                                                                                         attack_params=attack_params,
-                                                                                         dataset_class=dataset, aug=aug,
-                                                                                         show=False)
-                data.append([model_t, eps, clean_accuracy, confidence])
-            else:
-                attack_params = {"eps": eps}
-                clean_accuracy, adv_accuracy, confidence, adv_confidence = run_defence_experiment_1(model=model,
-                                                                                         attack_params=attack_params,
-                                                                                         dataset_class=dataset, aug=aug,
-                                                                                         show=False)
-                data.append([model_t, eps, adv_accuracy, adv_confidence])
+        if model_t in ["U"]:
+            model = get_model(CIFAR10, aug=False)
+        else:
+            model = get_model(CIFAR10, aug=True)
+        for augmentation in augmentation_set:
+            if augmentation == "Noise":
+                for eps in [0.01, 0.1, 0.5, 1, 2, 5, 10, 15, 20, 25]:
+                    aug = augmentations.ExactL2Noise(eps=eps)
+                    defended_accuracy, adv_robustness, confidence, adv_confidence = run_defence_experiment_1(model=model,
+                                                                                     attack_params=attack_params,
+                                                                                     dataset_class=dataset, aug=aug,
+                                                                                     show=False)
+                    data.append([model_t, False, defended_accuracy, eps, defended_accuracy, confidence])
+                    data.append([model_t, True, adv_robustness, augmentations, eps, adv_confidence])
+            elif augmentation == "Rotation":
+                for degrees in [5, 10, 15, 20, 35, 45, 55, 65, 75, 90]:
+                    aug = kornia.augmentation.RandomAffine(degrees=degrees, p=1)
+                    defended_accuracy, adv_robustness, confidence, adv_confidence = run_defence_experiment_1(
+                        model=model,
+                        attack_params=attack_params,
+                        dataset_class=dataset, aug=aug,
+                        show=False)
+                    data.append([model_t, False, defended_accuracy, degrees, defended_accuracy, confidence])
+                    data.append([model_t, True, adv_robustness, augmentations, degrees, adv_confidence])
+            elif augmentation == "Translation":
+                for translate in [0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]:
+                    aug = kornia.augmentation.RandomAffine(degrees=1, translate=(translate, translate), p=1)
+                    defended_accuracy, adv_robustness, confidence, adv_confidence = run_defence_experiment_1(
+                        model=model,
+                        attack_params=attack_params,
+                        dataset_class=dataset, aug=aug,
+                        show=False)
+                    data.append([model_t, False, defended_accuracy, translate, defended_accuracy, confidence])
+                    data.append([model_t, True, adv_robustness, augmentations, translate, adv_confidence])
+
     df = pd.DataFrame(data=data, columns=columns)
-    df.to_csv("NewExperiment1.csv")
+    df.to_csv("NewExperiment2.csv")

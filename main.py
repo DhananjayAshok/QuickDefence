@@ -69,13 +69,12 @@ def experiment(model=None, dataset_class=CIFAR10, output_shape=(10, ), batch_siz
         defended_adv_confidence
 
 
-def run_experiment1(save_name="Experiment1.csv", precompute_data=True, batch_size=100, n_runs=5):
-    print(f"Running Experiment 1 and saving to {save_name}")
+def run_experiment1(save_name="Experiment1", precompute_data=True, batch_size=100, n_runs=5, attack_class=PGDL2):
+    print(f"Running Experiment 1 and saving to {save_name}_{attack_class.__name__}.csv")
     columns = ["Run", "Model", "Attack Intensity", "Accuracy", "Confidence"]
     data = []
     dataset = ds.CIFAR10
     transform = get_torchvision_dataset(dataset_class=dataset, train=False).transform.transforms[2]
-    attack_class = PGDL2
     for i in tqdm(range(n_runs)):
         X = None
         y = None
@@ -107,9 +106,68 @@ def run_experiment1(save_name="Experiment1.csv", precompute_data=True, batch_siz
                     data.append([i, model_t, eps, defended_adv_accuracy[0], defended_adv_confidence[0]])
 
     df = pd.DataFrame(data=data, columns=columns)
-    df.to_csv(save_name, index=False)
+    df.to_csv(f"{save_name}_{attack_class.__name__}.csv", index=False)
+
+
+def run_experiment2(save_name="Experiment2", precompute_data=True, batch_size=100, n_runs=5, attack_class=PGDL2):
+    print(f"Running Experiment 2 and saving to {save_name}_{attack_class.__name__}.csv")
+    columns = ["Run", "Model", "Adversarial", "Augmentation", "Intensity", "Metric", "Confidence"]
+    data = []
+    models = ["U", "A"]
+    augmentation_set = ["Noise", "Rotation", "Translation"]
+
+    dataset = ds.CIFAR10
+    transform = get_torchvision_dataset(dataset_class=dataset, train=False).transform.transforms[2]
+
+    attack_class = PGDL2
+    attack_params = {"eps": 2}
+
+    for i in tqdm(range(n_runs)):
+        X = None
+        y = None
+        if precompute_data:
+            X, y = get_torchvision_dataset_sample(dataset_class=dataset, batch_size=batch_size)
+        for model_t in models:
+            if model_t in ["U"]:
+                model = get_model(CIFAR10, aug=False)
+            else:
+                model = get_model(CIFAR10, aug=True)
+            for augmentation in augmentation_set:
+                if augmentation == "Noise":
+                    for eps in [0.01, 0.1, 0.5, 1, 2, 5, 10, 15, 20, 25]:
+                        aug = augmentations.ExactL2Noise(eps=eps)
+                        clean_accuracy, adv_accuracy, defended_accuracy, defended_adv_accuracy, \
+                            defended_adv_robust, confidence, adv_confidence, defended_confidence, \
+                            defended_adv_confidence = experiment(model=model, attack_class=attack_class,
+                                                                 attack_params=attack_params, aug=aug, X=X, y=y,
+                                                                 batch_size=batch_size, transform=transform)
+                        data.append([i, model_t, False, augmentation, eps, defended_accuracy[0], confidence[0]])
+                        data.append([i, model_t, True, augmentation, eps, defended_adv_robust[0], adv_confidence[0]])
+                elif augmentation == "Rotation":
+                    for degrees in [5, 10, 15, 20, 35, 45, 55, 65, 75, 90]:
+                        aug = kornia.augmentation.RandomAffine(degrees=degrees, p=1)
+                        clean_accuracy, adv_accuracy, defended_accuracy, defended_adv_accuracy, \
+                            defended_adv_robust, confidence, adv_confidence, defended_confidence, \
+                            defended_adv_confidence = experiment(model=model, attack_class=attack_class,
+                                                                 attack_params=attack_params, aug=aug, X=X, y=y,
+                                                                 batch_size=batch_size, transform=transform)
+                        data.append([i, model_t, False, augmentation, degrees, defended_accuracy[0], confidence[0]])
+                        data.append([i, model_t, True, augmentation, degrees, defended_adv_robust[0], adv_confidence[0]])
+                elif augmentation == "Translation":
+                    for translate in [0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]:
+                        aug = kornia.augmentation.RandomAffine(degrees=1, translate=(translate, translate), p=1)
+                        clean_accuracy, adv_accuracy, defended_accuracy, defended_adv_accuracy, \
+                            defended_adv_robust, confidence, adv_confidence, defended_confidence, \
+                            defended_adv_confidence = experiment(model=model, attack_class=attack_class,
+                                                                 attack_params=attack_params, aug=aug, X=X, y=y,
+                                                                 batch_size=batch_size, transform=transform)
+                        data.append([i, model_t, False, augmentation, translate, defended_accuracy[0], confidence[0]])
+                        data.append([i, model_t, True, augmentation, translate, defended_adv_robust[0], adv_confidence[0]])
+
+    df = pd.DataFrame(data=data, columns=columns)
+    df.to_csv(f"{save_name}_{attack_class.__name__}.csv", index=False)
 
 
 if __name__ == "__main__":
     device = utils.Parameters.device
-    run_experiment1()
+    run_experiment2()

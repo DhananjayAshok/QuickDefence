@@ -1,23 +1,20 @@
 import pandas as pd
-import torch.multiprocessing as mp
-import torchvision.transforms as transforms
 from torchvision.datasets import CIFAR10
-from torchattacks import PGD, PGDL2
+from torchattacks import PGD, PGDL2, TPGD
 
 import augmentations
 import utils
-from adversarial_density import image_defence_density
 from attacks import ImageAttack
 from augmentations import get_augmentation, kornia
-from datasets import InverseNormalize, get_torchvision_dataset_sample, BatchNormalize, get_torchvision_dataset, \
-    get_index_to_class
+from datasets import InverseNormalize, get_torchvision_dataset_sample, BatchNormalize, get_torchvision_dataset
 from defence import DefendedNetwork
 from models import get_model
 import torchvision.datasets as ds
+from tqdm import tqdm
 
 
 def experiment(model=None, dataset_class=CIFAR10, output_shape=(10, ), batch_size=100, X=None, y=None,
-               attack_class=PGDL2, attack_params=None,
+               attack_class=PGDL2, attack_params=None, transform=None,
                aug=None, sample_rate=10):
     if model is None:
         model = get_model(dataset_class)
@@ -25,8 +22,8 @@ def experiment(model=None, dataset_class=CIFAR10, output_shape=(10, ), batch_siz
         aug = get_augmentation(dataset_class)
     if X is None or y is None:
         X, y = get_torchvision_dataset_sample(dataset_class, batch_size=batch_size)
-
-    transform = get_torchvision_dataset(dataset_class, train=False).transform.transforms[2]
+    if transform is None:
+        transform = get_torchvision_dataset(dataset_class, train=False).transform.transforms[2]
     batch_transform = BatchNormalize(normalize_transform=transform)
     inverse_transform = InverseNormalize(normalize_transform=transform)
     preprocessing = utils.normalize_to_dict(transform)
@@ -72,44 +69,45 @@ def experiment(model=None, dataset_class=CIFAR10, output_shape=(10, ), batch_siz
         defended_adv_confidence
 
 
-def run_experiment1(save_name="Experiment1.csv", precompute_data=True, batch_size=100):
-    dataset = ds.CIFAR10
-    X = None
-    y = None
-    if precompute_data:
-        X, y = get_torchvision_dataset_sample(dataset_class=dataset, batch_size=batch_size)
-    attack_class = PGDL2
-    columns = ["Model", "Attack Intensity", "Accuracy Mean", "Accuracy Std", "Confidence Mean", "Confidence Std"]
+def run_experiment1(save_name="Experiment1.csv", precompute_data=True, batch_size=100, n_runs=5):
+    print(f"Running Experiment 1 and saving to {save_name}")
+    columns = ["Run", "Model", "Attack Intensity", "Accuracy", "Confidence"]
     data = []
-    models = ["UU", "UA", "UN", "AU", "AA", "AN"]
-    attack_intensities = [0, 0.1, 0.25, 0.5, 1, 2, 4, 8]
-    for model_t in models:
-        for eps in attack_intensities:
-            if model_t in ["UU", "UA", "UN"]:
-                model = get_model(CIFAR10, aug=False)
-            else:
-                model = get_model(CIFAR10, aug=True)
-            if model_t in ["UU", "AU"]:
-                aug = lambda x: x
-            elif model_t in ["UA", "AA"]:
-                aug = get_augmentation(CIFAR10)
-            else:
-                aug = augmentations.CIFARAugmentation.noise
-            attack_params = {"eps": eps}
-            clean_accuracy, adv_accuracy, defended_accuracy, defended_adv_accuracy, \
-                defended_adv_robust, confidence, adv_confidence, defended_confidence, \
-                defended_adv_confidence = experiment(model=model, attack_class=attack_class,
-                                                     attack_params=attack_params, aug=aug, X=X, y=y,
-                                                     batch_size=batch_size)
-            if eps == 0:
-                data.append([model_t, eps, defended_accuracy[0], defended_accuracy[1],
-                             defended_confidence[0], defended_confidence[1]])
-            else:
-                data.append([model_t, eps, defended_adv_accuracy[0], defended_adv_accuracy[1],
-                             defended_adv_confidence[0], defended_adv_confidence[1]])
+    dataset = ds.CIFAR10
+    transform = get_torchvision_dataset(dataset_class=dataset, train=False).transform.transforms[2]
+    attack_class = PGDL2
+    for i in tqdm(range(n_runs)):
+        X = None
+        y = None
+        if precompute_data:
+            X, y = get_torchvision_dataset_sample(dataset_class=dataset, batch_size=batch_size)
+        models = ["UU", "UA", "UN", "AU", "AA", "AN"]
+        attack_intensities = [0, 0.1, 0.25, 0.5, 1, 2, 4, 8]
+        for model_t in models:
+            for eps in attack_intensities:
+                if model_t in ["UU", "UA", "UN"]:
+                    model = get_model(CIFAR10, aug=False)
+                else:
+                    model = get_model(CIFAR10, aug=True)
+                if model_t in ["UU", "AU"]:
+                    aug = lambda x: x
+                elif model_t in ["UA", "AA"]:
+                    aug = get_augmentation(CIFAR10)
+                else:
+                    aug = augmentations.CIFARAugmentation.noise
+                attack_params = {"eps": eps}
+                clean_accuracy, adv_accuracy, defended_accuracy, defended_adv_accuracy, \
+                    defended_adv_robust, confidence, adv_confidence, defended_confidence, \
+                    defended_adv_confidence = experiment(model=model, attack_class=attack_class,
+                                                         attack_params=attack_params, aug=aug, X=X, y=y,
+                                                         batch_size=batch_size, transform=transform)
+                if eps == 0:
+                    data.append([i, model_t, eps, defended_accuracy[0], defended_confidence[0]])
+                else:
+                    data.append([i, model_t, eps, defended_adv_accuracy[0], defended_adv_confidence[0]])
 
     df = pd.DataFrame(data=data, columns=columns)
-    df.to_csv(save_name)
+    df.to_csv(save_name, index=False)
 
 
 if __name__ == "__main__":

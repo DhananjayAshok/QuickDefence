@@ -1,6 +1,6 @@
 import pandas as pd
 from torchvision.datasets import CIFAR10
-from torchattacks import PGD, PGDL2, TPGD
+from torchattacks import PGD, PGDL2, TPGD, FFGSM, TIFGSM
 
 import augmentations
 import utils
@@ -119,7 +119,6 @@ def run_experiment2(save_name="Experiment2", precompute_data=True, batch_size=10
     dataset = ds.CIFAR10
     transform = get_torchvision_dataset(dataset_class=dataset, train=False).transform.transforms[2]
 
-    attack_class = PGDL2
     attack_params = {"eps": 2}
 
     for i in tqdm(range(n_runs)):
@@ -170,4 +169,7 @@ def run_experiment2(save_name="Experiment2", precompute_data=True, batch_size=10
 
 if __name__ == "__main__":
     device = utils.Parameters.device
-    run_experiment2()
+    attack_classes = [PGD, TPGD, FFGSM, TIFGSM]
+    for attack_class in attack_classes:
+        run_experiment1(attack_class=attack_class)
+        run_experiment2(attack_class=attack_class)

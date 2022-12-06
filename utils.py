@@ -119,6 +119,16 @@ def get_accuracy(y, pred):
     return (y == pred).float().mean()
 
 
+def get_accuracy_m_std(y, pred):
+    return (y == pred).float().mean().item(), (y == pred).float().std().item()
+
+
+def get_confidence_m_std(pred):
+    top = pred.topk(k=2, dim=-1)[0]
+    confidence = (top[:, 0] - top[:, 1])
+    return confidence.mean().item(), confidence.std().item()
+
+
 def get_conditional_robustness(y, clean_pred, adv_pred):
     """
     :return:

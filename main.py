@@ -16,29 +16,21 @@ from models import get_model
 import torchvision.datasets as ds
 
 
-def run_defence_experiment_1(model=None, dataset_class=CIFAR10, output_shape=(10, ), no_samples=32,
-                           attack_class=PGDL2, attack_params=None,
-                           aug=None, sample_rate=10, density_n_samples=100,
-                           show=True, density=False, indent="\t"*0):
-    transform = get_torchvision_dataset(dataset_class, train=False).transform.transforms[2]
-    index_to_class = get_index_to_class(dataset_class=dataset_class)
+def experiment(model=None, dataset_class=CIFAR10, output_shape=(10, ), batch_size=100, X=None, y=None,
+               attack_class=PGDL2, attack_params=None,
+               aug=None, sample_rate=10):
     if model is None:
         model = get_model(dataset_class)
+    if aug is None:
+        aug = get_augmentation(dataset_class)
+    if X is None or y is None:
+        X, y = get_torchvision_dataset_sample(dataset_class, batch_size=batch_size)
 
-    X, y = get_torchvision_dataset_sample(dataset_class, batch_size=no_samples)
-    pred = model(X).argmax(-1)
-
+    transform = get_torchvision_dataset(dataset_class, train=False).transform.transforms[2]
     batch_transform = BatchNormalize(normalize_transform=transform)
     inverse_transform = InverseNormalize(normalize_transform=transform)
     preprocessing = utils.normalize_to_dict(transform)
-    if aug is None:
-        aug = get_augmentation(dataset_class)
-    image_X = inverse_transform(X)
-    auged_X = aug(image_X)
-    if show:
-        utils.show_grid(
-            [image_X[0], auged_X[0]], title="Augmentation", captions=["Image", "Augmented Image"]
-        )
+
     defended = DefendedNetwork(
         network=model,
         data_augmentation=aug,
@@ -48,140 +40,78 @@ def run_defence_experiment_1(model=None, dataset_class=CIFAR10, output_shape=(10
         output_shape=output_shape,
         sample_rate=sample_rate,
     )
+
+    attack = ImageAttack(attack_class=attack_class, params=attack_params)
+    advs = attack(
+        model=model, input_batch=X, true_labels=y, preprocessing=preprocessing
+    )
+
+    pred = model(X)
+    adv_pred = model(advs)
     defended_pred = defended(X)
-    top = defended_pred.topk(k=2, dim=-1)[0]
-    confidence = top[:, 0] - top[:, 1]
-    defended_pred = defended_pred.argmax(-1)
-    print(
-        f"{indent}Clean Accuracy {utils.get_accuracy(y, pred)} vs Defended Accuracy "
-        f"{utils.get_accuracy(y, defended_pred)}"
-    )
-
-    attack = ImageAttack(attack_class=attack_class, params=attack_params)
-    advs = attack(
-        model=model, input_batch=X, true_labels=y, preprocessing=preprocessing
-    )
-    adv_img = inverse_transform(advs)
-    adv_pred = model(advs).argmax(-1)
     defended_adv_pred = defended(advs)
-    top = defended_adv_pred.topk(k=2, dim=-1)[0]
-    adv_confidence = top[:, 0] - top[:, 1]
+
+    confidence = utils.get_confidence_m_std(pred)
+    adv_confidence = utils.get_confidence_m_std(adv_pred)
+    defended_confidence = utils.get_confidence_m_std(defended_pred)
+    defended_adv_confidence = utils.get_confidence_m_std(defended_adv_pred)
+
+    pred = pred.argmax(-1)
+    adv_pred = adv_pred.argmax(-1)
+    defended_pred = defended_pred.argmax(-1)
     defended_adv_pred = defended_adv_pred.argmax(-1)
-    (
-        accuracy,
-        robust_accuracy,
-        conditional_robust_accuracy,
-        robustness,
-        success,
-    ) = utils.get_attack_success_measures(model, inps=X, advs=advs, true_labels=y)
-    print(accuracy, robust_accuracy, conditional_robust_accuracy, robustness)
-    (
-        accuracy,
-        robust_accuracy,
-        conditional_robust_accuracy,
-        robustness,
-        success_2,
-    ) = utils.get_attack_success_measures(defended, inps=X, advs=advs, true_labels=y)
-    print(accuracy, robust_accuracy, conditional_robust_accuracy, robustness)
 
-    if show:
-        utils.show_adversary_vs_original_with_preds(adv_img, img_X=image_X, y=y, adv_pred=adv_pred, pred=pred,
-                                                defended_pred=defended_adv_pred, index_to_class=index_to_class,
-                                                n_show=5)
-    if density:
-        print(f"{indent}DENSITY EXPERIMENT RESULTS:")
-        s_advs = advs[success]
-        s_y = y[success]
-        if sum(success) > 0:
-            density = image_defence_density(
-                model, s_advs, s_y, defence=aug, n_samples=density_n_samples, n_workers=1
-            )
-            robust_density = image_defence_density(
-                    model, s_advs, s_y, defence=aug, n_samples=density_n_samples, n_workers=1, robustness=True
-                )
+    clean_accuracy = utils.get_accuracy_m_std(y, pred)
+    adv_accuracy = utils.get_accuracy_m_std(y,adv_pred)
+    defended_accuracy = utils.get_accuracy_m_std(y, defended_pred)
+    defended_adv_accuracy = utils.get_accuracy_m_std(y, defended_adv_pred)
+    defended_adv_robust = utils.get_accuracy_m_std(defended_adv_pred, adv_pred)
 
-            de_adversarial_density = image_defence_density(
-                    model, s_advs, s_y, defence=aug, n_samples=density_n_samples, n_workers=1, de_adversarialize=True
-                )
-
-            utils.analyze_density_result_array(density, preprint="Density", indent=indent)
-            utils.analyze_density_result_array(robust_density, preprint="Robust Density", indent=indent)
-            utils.analyze_density_result_array(de_adversarial_density, preprint="De-Adversarial Density", indent=indent)
-    return utils.get_accuracy(y, defended_pred), utils.get_accuracy(adv_pred, defended_adv_pred), confidence, adv_confidence
+    return clean_accuracy, adv_accuracy, defended_accuracy, defended_adv_accuracy, \
+        defended_adv_robust, confidence, adv_confidence, defended_confidence, \
+        defended_adv_confidence
 
 
-def run_defence_experiment_2(dataset_class=CIFAR10, no_samples=32,
-                           attack_class=PGDL2, attack_params=None,
-                           aug=None, density_n_samples=100,
-                           show=True, indent="\t"*0):
-    transform = get_torchvision_dataset(dataset_class, train=False).transform.transforms[2]
-    model = get_model(dataset_class)
+def run_experiment1(save_name="Experiment1.csv", precompute_data=True, batch_size=100):
+    dataset = ds.CIFAR10
+    X = None
+    y = None
+    if precompute_data:
+        X, y = get_torchvision_dataset_sample(dataset_class=dataset, batch_size=batch_size)
+    attack_class = PGDL2
+    columns = ["Model", "Attack Intensity", "Accuracy Mean", "Accuracy Std", "Confidence Mean", "Confidence Std"]
+    data = []
+    models = ["UU", "UA", "UN", "AU", "AA", "AN"]
+    attack_intensities = [0, 0.1, 0.25, 0.5, 1, 2, 4, 8]
+    for model_t in models:
+        for eps in attack_intensities:
+            if model_t in ["UU", "UA", "UN"]:
+                model = get_model(CIFAR10, aug=False)
+            else:
+                model = get_model(CIFAR10, aug=True)
+            if model_t in ["UU", "AU"]:
+                aug = lambda x: x
+            elif model_t in ["UA", "AA"]:
+                aug = get_augmentation(CIFAR10)
+            else:
+                aug = augmentations.CIFARAugmentation.noise
+            attack_params = {"eps": eps}
+            clean_accuracy, adv_accuracy, defended_accuracy, defended_adv_accuracy, \
+                defended_adv_robust, confidence, adv_confidence, defended_confidence, \
+                defended_adv_confidence = experiment(model=model, attack_class=attack_class,
+                                                     attack_params=attack_params, aug=aug, X=X, y=y,
+                                                     batch_size=batch_size)
+            if eps == 0:
+                data.append([model_t, eps, defended_accuracy[0], defended_accuracy[1],
+                             defended_confidence[0], defended_confidence[1]])
+            else:
+                data.append([model_t, eps, defended_adv_accuracy[0], defended_adv_accuracy[1],
+                             defended_adv_confidence[0], defended_adv_confidence[1]])
 
-    X, y = get_torchvision_dataset_sample(dataset_class, batch_size=no_samples)
-
-    inverse_transform = InverseNormalize(normalize_transform=transform)
-    batch_transform = BatchNormalize(normalize_transform=transform)
-    preprocessing = utils.normalize_to_dict(transform)
-    if aug is None:
-        aug = get_augmentation(dataset_class)
-    image_X = inverse_transform(X)
-    auged_X = batch_transform(aug(image_X))
-    aug_pred = model(auged_X).argmax(-1)
-    attack = ImageAttack(attack_class=attack_class, params=attack_params)
-    advs = attack(
-        model=model, input_batch=X, true_labels=y, preprocessing=preprocessing
-    )
-    adv_pred = model(advs).argmax(-1)
-    aug_advs = batch_transform(aug(inverse_transform(advs)))
-    aug_adv_pred = model(aug_advs).argmax(-1)
-
-    return utils.get_accuracy(y, aug_pred), utils.get_accuracy(y, aug_adv_pred), utils.get_accuracy(adv_pred, aug_adv_pred)
+    df = pd.DataFrame(data=data, columns=columns)
+    df.to_csv(save_name)
 
 
 if __name__ == "__main__":
-    mp.set_start_method("spawn")
     device = utils.Parameters.device
-    dataset = ds.CIFAR10
-    attack_params = {"eps": 2}
-    columns = ["Model", "Adversarial", "Augmentation", "Intensity",  "Accuracy", "Confidence"]
-    data = []
-    models = ["U", "A"]
-    augmentation_set = ["Noise", "Rotation", "Translation"]
-    for model_t in models:
-        if model_t in ["U"]:
-            model = get_model(CIFAR10, aug=False)
-        else:
-            model = get_model(CIFAR10, aug=True)
-        for augmentation in augmentation_set:
-            if augmentation == "Noise":
-                for eps in [0.01, 0.1, 0.5, 1, 2, 5, 10, 15, 20, 25]:
-                    aug = augmentations.ExactL2Noise(eps=eps)
-                    defended_accuracy, adv_robustness, confidence, adv_confidence = run_defence_experiment_1(model=model,
-                                                                                     attack_params=attack_params,
-                                                                                     dataset_class=dataset, aug=aug,
-                                                                                     show=False)
-                    data.append([model_t, False, defended_accuracy, eps, defended_accuracy, confidence])
-                    data.append([model_t, True, adv_robustness, augmentations, eps, adv_confidence])
-            elif augmentation == "Rotation":
-                for degrees in [5, 10, 15, 20, 35, 45, 55, 65, 75, 90]:
-                    aug = kornia.augmentation.RandomAffine(degrees=degrees, p=1)
-                    defended_accuracy, adv_robustness, confidence, adv_confidence = run_defence_experiment_1(
-                        model=model,
-                        attack_params=attack_params,
-                        dataset_class=dataset, aug=aug,
-                        show=False)
-                    data.append([model_t, False, defended_accuracy, degrees, defended_accuracy, confidence])
-                    data.append([model_t, True, adv_robustness, augmentations, degrees, adv_confidence])
-            elif augmentation == "Translation":
-                for translate in [0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]:
-                    aug = kornia.augmentation.RandomAffine(degrees=1, translate=(translate, translate), p=1)
-                    defended_accuracy, adv_robustness, confidence, adv_confidence = run_defence_experiment_1(
-                        model=model,
-                        attack_params=attack_params,
-                        dataset_class=dataset, aug=aug,
-                        show=False)
-                    data.append([model_t, False, defended_accuracy, translate, defended_accuracy, confidence])
-                    data.append([model_t, True, adv_robustness, augmentations, translate, adv_confidence])
-
-    df = pd.DataFrame(data=data, columns=columns)
-    df.to_csv("NewExperiment2.csv")
+    run_experiment1()
